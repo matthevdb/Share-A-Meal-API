@@ -18,7 +18,6 @@ app.get('/api/info', (req, res) => {
     res.status(200).json(
         {
             status: 200,
-            time: Date.now(),
             message: 'Server info-endpoint',
             data: SYSINFO
         }
