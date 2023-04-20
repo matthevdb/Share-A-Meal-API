@@ -1,6 +1,25 @@
 const express = require('express')
+const assert = require('assert')
 const app = express()
 const port = 3000
+app.use(express.json())
+
+// In-memory database
+let users = [
+    {
+        id: 1,
+        firstName: 'Matthé',
+        lastName: 'van den Berg',
+        emailAdress: 'mat.vandenberg@student.avans.nl',
+    },
+    {
+        id: 2,
+        firstName: 'Robin',
+        lastName: 'Schellius',
+        emailAdress: 'r.schellius@avans.nl',
+    },
+]
+let index = users.length
 
 const SYSINFO = {
     studentName: 'Matthé van den Berg',
@@ -22,6 +41,47 @@ app.get('/api/info', (req, res) => {
             data: SYSINFO
         }
     )
+})
+
+// UC-201 Registreren als nieuwe user
+app.post('/api/user', (req, res) => {
+    let { firstName, lastName, emailAdress } = req.body
+
+    try {
+        assert(typeof firstName === 'string', 'firstName must be a string')
+        assert(typeof lastName === 'string', 'lastName must be a string')
+        assert(typeof emailAdress === 'string', 'emailAdress must be a string')
+
+        index = index + 1
+        let newUser = {
+            id: index,
+            firstName: firstName,
+            lastName: lastName,
+            emailAdress: emailAdress
+        }
+        users.push(newUser)
+
+        res.status(201).json({
+            status: 201,
+            message: `Added user with id ${index}`,
+            data: newUser,
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: 400,
+            message: error.toString(),
+            data: {},
+        })
+    }
+})
+
+// UC-202 Opvragen van overzicht van users
+app.get('/api/user', (req, res) => {
+    res.status(200).json({
+        status: 200,
+        message: '',
+        data: users
+    })
 })
 
 app.use('*', (req, res) => {
