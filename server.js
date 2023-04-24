@@ -114,7 +114,8 @@ app.get('/api/user/:id', (req, res) => {
     } else {
         res.status(404).json({
             status: 404,
-            message: `User with id ${id} not found.`
+            message: `User with id ${id} not found.`,
+            data: {}
         })
     }
 })
@@ -128,7 +129,8 @@ app.put('/api/user/:id', (req, res) => {
     if (userId == -1) {
         res.status(404).json({
             status: 404,
-            message: `User with id ${id} not found.`
+            message: `User with id ${id} not found.`,
+            data: {}
         })
     } else {
         try {
@@ -168,14 +170,16 @@ app.delete('/api/user/:id', (req, res) => {
     if (userId == -1) {
         res.status(404).json({
             status: 404,
-            message: `User with id ${id} not found.`
+            message: `User with id ${id} not found.`,
+            data: {}
         })
     } else {
         users.splice(userId, 1)
 
         res.status(200).json({
             status: 200,
-            message: `User with id ${id} deleted.`
+            message: `User with id ${id} deleted.`,
+            data: {}
         })
     }
 })
