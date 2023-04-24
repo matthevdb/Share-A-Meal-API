@@ -101,6 +101,24 @@ app.get('/api/user', (req, res) => {
     }
 })
 
+// UC-204 Opvragen van usergegevens bij ID
+app.get('/api/user/:id', (req, res) => {
+    let id = req.params.id
+    let user = users.filter(user => user.id == id)
+    if (user.length > 0) {
+        res.status(200).json({
+            status: 200,
+            message: `User with id ${id} found.`,
+            data: user
+        })
+    } else {
+        res.status(404).json({
+            status: 404,
+            message: `User with id ${id} not found.`
+        })
+    }
+})
+
 app.use('*', (req, res) => {
     res.status(404).json(
         {
