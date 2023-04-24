@@ -22,7 +22,12 @@ describe('UC-201 Register as new user', function () {
                     res.body.should.has.property('data')
                     res.body.should.has.property('status').to.be.equal(201)
                     res.body.should.has.property('message').to.be.equal(`Added user with id ${userId}.`)
-                    data.should.be.an('object').to.be.empty
+                    data.should.deep.include({
+                        id: userId,
+                        firstName: "Matthé",
+                        lastName: "van den Berg",
+                        emailAdress: "mat.vandenberg@student.avans.nl"
+                    });
                     done()
                 })
         })
