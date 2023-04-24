@@ -52,20 +52,29 @@ app.post('/api/user', (req, res) => {
         assert(typeof lastName === 'string', 'lastName must be a string')
         assert(typeof emailAdress === 'string', 'emailAdress must be a string')
 
-        index = index + 1
-        let newUser = {
-            id: index,
-            firstName: firstName,
-            lastName: lastName,
-            emailAdress: emailAdress
-        }
-        users.push(newUser)
+        if (users.some(user => user.emailAdress === emailAdress)) {
+            res.status(403).json({
+                status: 403,
+                message: `User with email adress ${emailAdress} already exists.`,
+                data: {}
+            })
+        } else {
+            index = index + 1
+            let newUser = {
+                id: index,
+                firstName: firstName,
+                lastName: lastName,
+                emailAdress: emailAdress
+            }
+    
+            users.push(newUser)
 
-        res.status(201).json({
-            status: 201,
-            message: `Added user with id ${index}.`,
-            data: newUser,
-        })
+            res.status(201).json({
+                status: 201,
+                message: `Added user with id ${index}.`,
+                data: newUser,
+            })
+        }
     } catch (error) {
         res.status(400).json({
             status: 400,
@@ -146,7 +155,7 @@ app.put('/api/user/:id', (req, res) => {
             assert(typeof firstName === 'string', 'firstName must be a string')
             assert(typeof lastName === 'string', 'lastName must be a string')
             assert(typeof emailAdress === 'string', 'emailAdress must be a string')
-    
+
             let changedUser = {
                 id: id,
                 firstName: firstName,
@@ -155,7 +164,7 @@ app.put('/api/user/:id', (req, res) => {
             }
 
             users[userId] = changedUser
-    
+
             res.status(201).json({
                 status: 201,
                 message: `Updated user with id ${id}.`,

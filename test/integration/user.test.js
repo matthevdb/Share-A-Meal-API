@@ -13,7 +13,7 @@ describe('UC-201 Register as new user', function () {
                 .send({
                     "firstName": "Matthé",
                     "lastName": "van den Berg",
-                    "emailAdress": "mat.vandenberg@student.avans.nl"
+                    "emailAdress": "matTest.vandenberg@student.avans.nl"
                 })
                 .end((err, res) => {
                     let { data, message } = res.body
@@ -26,7 +26,7 @@ describe('UC-201 Register as new user', function () {
                         id: userId,
                         firstName: "Matthé",
                         lastName: "van den Berg",
-                        emailAdress: "mat.vandenberg@student.avans.nl"
+                        emailAdress: "matTest.vandenberg@student.avans.nl"
                     });
                     done()
                 })
