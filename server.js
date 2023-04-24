@@ -77,11 +77,28 @@ app.post('/api/user', (req, res) => {
 
 // UC-202 Opvragen van overzicht van users
 app.get('/api/user', (req, res) => {
-    res.status(200).json({
-        status: 200,
-        message: '',
-        data: users
-    })
+    let filters = req.query;
+    let filteredUsers = users.filter(user => {
+        let isValid = true;
+        for (key in filters) {
+            console.log(key, user[key], filters[key]);
+            isValid = isValid && user[key].toString().toLowerCase() == filters[key].toString().toLowerCase();
+        }
+        return isValid;
+    });
+    if (filteredUsers.length > 0) {
+        res.status(200).json({
+            status: 200,
+            message: 'Users found matching the search parameters.',
+            data: filteredUsers
+        })
+    } else {
+        res.status(404).json({
+            status: 404,
+            message: 'No users found matching the search parameters.',
+            data: {}
+        })
+    }
 })
 
 app.use('*', (req, res) => {
