@@ -63,7 +63,7 @@ describe('UC-203 Requesting the user profile', function () {
                     res.body.should.has.property('data')
                     let { data, message } = res.body
                     message.should.be.equal('Personal user profile succesfully returned.')
-                    data.should.be.an('array').that.includes({
+                    data.should.deep.include({
                         "id": 1,
                         "firstName": "Matthé",
                         "lastName": "van den Berg",

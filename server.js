@@ -102,6 +102,13 @@ app.get('/api/user', (req, res) => {
 })
 
 // UC-203 Opvragen van gebruikersprofiel
+app.get('/api/user/profile', (req, res) => {
+    res.status(200).json({
+        status: 200,
+        message: 'Personal user profile succesfully returned.',
+        data: users[0]
+    })
+})
 
 // UC-204 Opvragen van usergegevens bij ID
 app.get('/api/user/:id', (req, res) => {
