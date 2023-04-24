@@ -37,7 +37,7 @@ app.get('/api/info', (req, res) => {
     res.status(200).json(
         {
             status: 200,
-            message: 'Server info-endpoint',
+            message: 'Server info-endpoint.',
             data: SYSINFO
         }
     )
@@ -63,7 +63,7 @@ app.post('/api/user', (req, res) => {
 
         res.status(201).json({
             status: 201,
-            message: `Added user with id ${index}`,
+            message: `Added user with id ${index}.`,
             data: newUser,
         })
     } catch (error) {
@@ -100,6 +100,8 @@ app.get('/api/user', (req, res) => {
         })
     }
 })
+
+// UC-203 Opvragen van gebruikersprofiel
 
 // UC-204 Opvragen van usergegevens bij ID
 app.get('/api/user/:id', (req, res) => {
@@ -149,7 +151,7 @@ app.put('/api/user/:id', (req, res) => {
     
             res.status(201).json({
                 status: 201,
-                message: `Updated user with id ${id}`,
+                message: `Updated user with id ${id}.`,
                 data: changedUser,
             })
         } catch (error) {
@@ -188,7 +190,7 @@ app.use('*', (req, res) => {
     res.status(404).json(
         {
             status: 404,
-            message: 'Endpoint not found',
+            message: 'Endpoint not found.',
             data: {}
         }
     )
