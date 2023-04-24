@@ -119,6 +119,47 @@ app.get('/api/user/:id', (req, res) => {
     }
 })
 
+// UC-205 Wijzigen van usergegevens
+app.put('/api/user/:id', (req, res) => {
+    let id = req.params.id
+    let { firstName, lastName, emailAdress } = req.body
+    let userId = users.findIndex(user => user.id == id)
+
+    if (userId == -1) {
+        res.status(404).json({
+            status: 404,
+            message: `User with id ${id} not found.`
+        })
+    } else {
+        try {
+            assert(typeof firstName === 'string', 'firstName must be a string')
+            assert(typeof lastName === 'string', 'lastName must be a string')
+            assert(typeof emailAdress === 'string', 'emailAdress must be a string')
+    
+            let changedUser = {
+                id: id,
+                firstName: firstName,
+                lastName: lastName,
+                emailAdress: emailAdress
+            }
+
+            users[userId] = changedUser
+    
+            res.status(201).json({
+                status: 201,
+                message: `Updated user with id ${id}`,
+                data: changedUser,
+            })
+        } catch (error) {
+            res.status(400).json({
+                status: 400,
+                message: error.toString(),
+                data: {},
+            })
+        }
+    }
+})
+
 app.use('*', (req, res) => {
     res.status(404).json(
         {
