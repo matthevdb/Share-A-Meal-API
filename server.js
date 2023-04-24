@@ -160,6 +160,26 @@ app.put('/api/user/:id', (req, res) => {
     }
 })
 
+// UC-206 Verwijderen van user
+app.delete('/api/user/:id', (req, res) => {
+    let id = req.params.id
+    let userId = users.findIndex(user => user.id == id)
+
+    if (userId == -1) {
+        res.status(404).json({
+            status: 404,
+            message: `User with id ${id} not found.`
+        })
+    } else {
+        users.splice(userId, 1)
+
+        res.status(200).json({
+            status: 200,
+            message: `User with id ${id} deleted.`
+        })
+    }
+})
+
 app.use('*', (req, res) => {
     res.status(404).json(
         {
