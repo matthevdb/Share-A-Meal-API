@@ -20,31 +20,34 @@ let index = users.length
 let controller = {
     validateUser: (req, res, next) => {
         let { firstName, lastName, emailAdress } = req.body
-        
+
         try {
             assert(typeof firstName === 'string', 'firstName must be a string')
             assert(typeof lastName === 'string', 'lastName must be a string')
             assert(typeof emailAdress === 'string', 'emailAdress must be a string')
 
             next()
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({
+        } catch (err) {
+            const error = {
                 status: 400,
-                message: error.toString(),
-                data: {},
-            })
+                message: err.message,
+                data: {}
+            }
+
+            next(error)
         }
     },
-    addUser: (req, res) => {
+    addUser: (req, res, next) => {
         let { firstName, lastName, emailAdress } = req.body
 
         if (users.some(user => user.emailAdress === emailAdress)) {
-            res.status(403).json({
+            const error = {
                 status: 403,
                 message: `User with email adress ${emailAdress} already exists.`,
                 data: {}
-            })
+            }
+
+            next(error)
         } else {
             index = index + 1
             let newUser = {
@@ -63,7 +66,7 @@ let controller = {
             })
         }
     },
-    getAllUsers: (req, res) => {
+    getAllUsers: (req, res, next) => {
         let filters = req.query;
         let filteredUsers = users.filter(user => {
             let isValid = true;
@@ -80,11 +83,13 @@ let controller = {
                 data: filteredUsers
             })
         } else {
-            res.status(404).json({
+            const error = {
                 status: 404,
                 message: 'No users found matching the search parameters.',
                 data: {}
-            })
+            }
+
+            next(error)
         }
     },
     getUserProfile: (req, res) => {
@@ -94,7 +99,7 @@ let controller = {
             data: users[0]
         })
     },
-    getUserByID: (req, res) => {
+    getUserByID: (req, res, next) => {
         let id = req.params.id
         let user = users.filter(user => user.id == id)
         if (user.length > 0) {
@@ -104,14 +109,16 @@ let controller = {
                 data: user
             })
         } else {
-            res.status(404).json({
+            const error = {
                 status: 404,
                 message: `User with id ${id} not found.`,
                 data: {}
-            })
+            }
+
+            next(error)
         }
     },
-    changeUserData: (req, res) => {
+    changeUserData: (req, res, next) => {
         let id = req.params.id
         let { firstName, lastName, emailAdress } = req.body
         let userId = users.findIndex(user => user.id == id)
@@ -126,11 +133,13 @@ let controller = {
         users[userId] = changedUser
 
         if (userId == -1) {
-            res.status(404).json({
+            const error = {
                 status: 404,
                 message: `User with id ${id} not found.`,
                 data: {}
-            })
+            }
+
+            next(error)
         } else {
             res.status(201).json({
                 status: 201,
@@ -139,16 +148,18 @@ let controller = {
             })
         }
     },
-    deleteUser: (req, res) => {
+    deleteUser: (req, res, next) => {
         let id = req.params.id
         let userId = users.findIndex(user => user.id == id)
 
         if (userId == -1) {
-            res.status(404).json({
+            const error = {
                 status: 404,
                 message: `User with id ${id} not found.`,
                 data: {}
-            })
+            }
+
+            next(error)
         } else {
             users.splice(userId, 1)
 
