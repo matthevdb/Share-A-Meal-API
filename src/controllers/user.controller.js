@@ -1,4 +1,5 @@
 const assert = require("assert");
+const pool = require("../../database/dbconnection");
 
 // In-memory database
 let users = [
@@ -40,31 +41,44 @@ let controller = {
   addUser: (req, res, next) => {
     let { firstName, lastName, emailAdress } = req.body;
 
-    if (users.some((user) => user.emailAdress === emailAdress)) {
-      const error = {
-        status: 403,
-        message: `User with email adress ${emailAdress} already exists.`,
-        data: {},
-      };
+    pool.getConnection((error, connection) => {
+      connection.query(
+        "INSERT INTO user (firstName, lastName, emailAdress) VALUES (?, ?, ?)",
+        [firstName, lastName, emailAdress],
+        (error, result) => {
+          if (error) {
+            if (error.code == "ER_DUP_ENTRY") {
+              const error = {
+                status: 403,
+                message: `User with email adress ${emailAdress} already exists.`,
+                data: {},
+              };
+              next(error);
+            } else {
+              const error = {
+                status: 403,
+                message: error.sqlMessage,
+                data: {},
+              };
+            }
+          } else {
+            const id = result.insertId;
 
-      next(error);
-    } else {
-      index = index + 1;
-      let newUser = {
-        id: index,
-        firstName: firstName,
-        lastName: lastName,
-        emailAdress: emailAdress,
-      };
-
-      users.push(newUser);
-
-      res.status(201).json({
-        status: 201,
-        message: `Added user with id ${index}.`,
-        data: newUser,
-      });
-    }
+            connection.query(
+              "SELECT id, firstName, lastName, emailAdress FROM user WHERE id = ?",
+              id,
+              (error, result) => {
+                res.status(201).json({
+                  status: 201,
+                  message: `Added user with id ${id}.`,
+                  data: result[0],
+                });
+              }
+            );
+          }
+        }
+      );
+    });
   },
   getAllUsers: (req, res, next) => {
     let filters = req.query;
