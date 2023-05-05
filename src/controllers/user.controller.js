@@ -83,33 +83,50 @@ let controller = {
     });
   },
   getAllUsers: (req, res, next) => {
-    let filters = req.query;
-    let filteredUsers = users.filter((user) => {
-      let isValid = true;
-      for (key in filters) {
-        console.log(key, user[key], filters[key]);
-        isValid =
-          isValid &&
-          user[key].toString().toLowerCase() ==
-            filters[key].toString().toLowerCase();
-      }
-      return isValid;
-    });
-    if (filteredUsers.length > 0) {
-      res.status(200).json({
-        status: 200,
-        message: "Users found matching the search parameters.",
-        data: filteredUsers,
-      });
-    } else {
-      const error = {
-        status: 404,
-        message: "No users found matching the search parameters.",
-        data: {},
-      };
+    let query = req.query;
+    id = query.id || "%";
+    firstName = query.firstName || "%";
+    lastName = query.lastName || "%";
+    street = query.street || "%";
+    city = query.city || "%";
+    isActive = query.isActive || "%";
+    emailAdress = query.emailAdress || "%";
+    phoneNumber = query.phoneNumber || "%";
 
-      next(error);
-    }
+    pool.getConnection((error, connection) => {
+      connection.query(
+        "SELECT id, firstName, lastName, street, city, isActive, emailAdress, phoneNumber FROM user WHERE id LIKE ? AND firstName LIKE ? AND lastName LIKE ? and street LIKE ? AND city LIKE ? AND isActive LIKE ? AND emailAdress LIKE ? AND phoneNumber LIKE ?;",
+        [
+          id,
+          firstName,
+          lastName,
+          street,
+          city,
+          isActive,
+          emailAdress,
+          phoneNumber,
+        ],
+        (error, result) => {
+          console.log(error);
+          if (result.length == 0) {
+            const error = {
+              status: 404,
+              message: "No users found matching the search parameters.",
+              data: {},
+            };
+
+            next(error);
+          } else {
+            res.status(200).json({
+              status: 200,
+              message: "Users found matching the search parameters.",
+              data: result,
+            });
+          }
+        }
+      );
+      connection.release();
+    });
   },
   getUserProfile: (req, res) => {
     res.status(200).json({
