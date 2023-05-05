@@ -78,6 +78,8 @@ let controller = {
           }
         }
       );
+
+      connection.release();
     });
   },
   getAllUsers: (req, res, next) => {
