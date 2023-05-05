@@ -1,10 +1,15 @@
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../../server");
+const pool = require("../../database/dbconnection");
 chai.should();
 chai.use(chaiHttp);
 
 describe("UC-201 Register as new user", function () {
+  this.beforeEach(() => {
+    pool.query("DELETE FROM user");
+  });
+
   describe("TC-201-5 User succesfully registered", function () {
     let userId;
     it("should return relevant response", (done) => {
@@ -14,7 +19,7 @@ describe("UC-201 Register as new user", function () {
         .send({
           firstName: "Matthé",
           lastName: "van den Berg",
-          emailAdress: "matTest.vandenberg@student.avans.nl",
+          emailAdress: "mat.vandenberg@student.avans.nl",
         })
         .end((err, res) => {
           let { data, message } = res.body;
@@ -29,7 +34,7 @@ describe("UC-201 Register as new user", function () {
             id: userId,
             firstName: "Matthé",
             lastName: "van den Berg",
-            emailAdress: "matTest.vandenberg@student.avans.nl",
+            emailAdress: "mat.vandenberg@student.avans.nl",
           });
           done();
         });
