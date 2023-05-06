@@ -137,22 +137,28 @@ let controller = {
   },
   getUserByID: (req, res, next) => {
     let id = req.params.id;
-    let user = users.filter((user) => user.id == id);
-    if (user.length > 0) {
-      res.status(200).json({
-        status: 200,
-        message: `User with id ${id} found.`,
-        data: user,
-      });
-    } else {
-      const error = {
-        status: 404,
-        message: `User with id ${id} not found.`,
-        data: {},
-      };
 
-      next(error);
-    }
+    pool.query(
+      "SELECT id, firstName, lastName, street, city, isActive, emailAdress, phoneNumber FROM user WHERE id = ?",
+      id,
+      (error, result) => {
+        if (result.length == 0) {
+          const error = {
+            status: 404,
+            message: `User with id ${id} not found.`,
+            data: {},
+          };
+
+          next(error);
+        } else {
+          res.status(200).json({
+            status: 200,
+            message: `User with id ${id} found.`,
+            data: result[0],
+          });
+        }
+      }
+    );
   },
   changeUserData: (req, res, next) => {
     let id = req.params.id;
