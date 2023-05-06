@@ -6,8 +6,11 @@ chai.should();
 chai.use(chaiHttp);
 
 describe("UC-201 Register as new user", function () {
-  this.beforeEach(() => {
-    pool.query("DELETE FROM user");
+  beforeEach((done) => {
+    pool.query("DELETE FROM user", (err) => {
+      if (err) return done(err);
+      done();
+    });
   });
 
   describe("TC-201-5 User succesfully registered", function () {
