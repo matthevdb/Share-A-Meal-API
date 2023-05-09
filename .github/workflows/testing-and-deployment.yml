@@ -39,6 +39,10 @@ jobs:
         run: |
           npm install
 
+      - name: install mocha
+        run: |
+          npm install mocha
+
       - name: npm test
         run: |
           npm test -- --DB_PASSWORD ${{env.MYSQL_ROOT_PASSWORD}} --DB_USER root --DB_NAME ${{env.DB_DATABASE}}
