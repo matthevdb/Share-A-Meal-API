@@ -21,6 +21,8 @@ jobs:
         image: mysql:5.7
         ports:
           - "3306"
+        environment: -MYSQL_ROOT_PASSWORD=root
+
     steps:
       - uses: actions/checkout@main
 
@@ -44,7 +46,7 @@ jobs:
 
       - name: npm test
         run: |
-          npm test -- --DB_PASSWORD {{env.MYSQL_ROOT_PASSWORD}} --DB_USER root --DB_NAME ${{env.DB_DATABASE}}
+          npm test -- --DB_PASSWORD ${{env.MYSQL_ROOT_PASSWORD}} --DB_USER root --DB_NAME ${{env.DB_DATABASE}}
 
   # Railway-deploy:
   #   needs: integrationtests
