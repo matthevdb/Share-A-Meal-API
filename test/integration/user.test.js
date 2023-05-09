@@ -19,6 +19,10 @@ beforeEach((done) => {
   });
 });
 
+after(() => {
+  pool.end();
+});
+
 describe("UC-201 Register as new user", function () {
   describe("TC-201-5 User succesfully registered", function () {
     let userId;
