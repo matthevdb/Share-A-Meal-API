@@ -12,12 +12,10 @@ const INSERT_USER =
 const INSERT_TWO_USERS =
   "INSERT INTO user (emailAdress) VALUES ('mat.vandenberg@student.avans.nl'), ('mat2.vandenberg@student.avans.nl');";
 
-beforeEach(() => {
-  return new Promise((resolve, reject) => {
-    pool.query(CLEAR_DATABASE, (err) => {
-      if (err) reject(err);
-      resolve();
-    });
+beforeEach((done) => {
+  pool.query(CLEAR_DATABASE, (err) => {
+    if (err) return done(err);
+    done();
   });
 });
 
@@ -59,12 +57,9 @@ describe("UC-201 Register as new user", function () {
 });
 describe("UC-202 Requesting an overview of users", function () {
   describe("TC-202-1 Display all users", function () {
-    beforeEach(() => {
-      return new Promise((resolve, reject) => {
-        pool.query(INSERT_TWO_USERS, (error, result) => {
-          if (error) reject(error);
-          resolve();
-        });
+    beforeEach((done) => {
+      pool.query(INSERT_TWO_USERS, (error, result) => {
+        done();
       });
     });
 
