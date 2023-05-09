@@ -163,7 +163,6 @@ let controller = {
   changeUserData: (req, res, next) => {
     let id = req.params.id;
     let { firstName, lastName, emailAdress } = req.body;
-    let userId = users.findIndex((user) => user.id == id);
 
     pool.getConnection((error, connection) => {
       connection.query(
