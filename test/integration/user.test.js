@@ -5,16 +5,15 @@ const pool = require("../../database/dbconnection");
 chai.should();
 chai.use(chaiHttp);
 
-describe("UC-201 Register as new user", function () {
-  beforeEach((done) => {
-    pool.query(
-      "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user",
-      (err) => {
-        if (err) return done(err);
-        done();
-      }
-    );
-  });
+beforeEach((done) => {
+  pool.query(
+    "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user",
+    (err) => {
+      if (err) return done(err);
+      done();
+    }
+  );
+});
 
 const INSERT_USER =
   "INSERT INTO user (emailAdress) VALUES ('mat.vandenberg@student.avans.nl');";
@@ -55,6 +54,12 @@ describe("UC-201 Register as new user", function () {
 });
 describe("UC-202 Requesting an overview of users", function () {
   describe("TC-202-1 Display all users", function () {
+    beforeEach((done) => {
+      pool.query(INSERT_TWO_USERS, (error, result) => {
+        done();
+      });
+    });
+
     it("should return atleast 2 users", (done) => {
       chai
         .request(server)
@@ -102,21 +107,28 @@ describe("UC-203 Requesting the user profile", function () {
 });
 describe("UC-204 Request user data by ID", function () {
   describe("TC-204-3 User ID exists", function () {
+    let userID;
+
+    beforeEach((done) => {
+      pool.query(INSERT_USER, (error, result) => {
+        userID = result.insertId;
+        done();
+      });
+    });
+
     it("should return user data", (done) => {
       chai
         .request(server)
-        .get("/api/user/1")
+        .get(`/api/user/${userID}`)
         .end((err, res) => {
           res.body.should.be.an("object");
           res.body.should.has.property("status").to.be.equal(200);
           res.body.should.has.property("message");
           res.body.should.has.property("data");
           let { data, message } = res.body;
-          message.should.be.equal("User with id 1 found.");
-          data.should.be.an("array").to.deep.include({
-            id: 1,
-            firstName: "Matthé",
-            lastName: "van den Berg",
+          message.should.be.equal(`User with id ${userID} found.`);
+          data.should.be.an("object").to.deep.include({
+            id: userID,
             emailAdress: "mat.vandenberg@student.avans.nl",
           });
           done();
