@@ -28,9 +28,9 @@ let controller = {
       connection.query(
         "INSERT INTO user (firstName, lastName, emailAdress) VALUES (?, ?, ?)",
         [firstName, lastName, emailAdress],
-        (error, result) => {
-          if (error) {
-            if (error.code == "ER_DUP_ENTRY") {
+        (err, result) => {
+          if (err) {
+            if (err.code == "ER_DUP_ENTRY") {
               const error = {
                 status: 403,
                 message: `User with email adress ${emailAdress} already exists.`,
@@ -40,7 +40,7 @@ let controller = {
             } else {
               const error = {
                 status: 403,
-                message: error.sqlMessage,
+                message: err.sqlMessage,
                 data: {},
               };
             }
