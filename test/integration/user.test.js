@@ -7,10 +7,13 @@ chai.use(chaiHttp);
 
 describe("UC-201 Register as new user", function () {
   beforeEach((done) => {
-    pool.query("DELETE FROM user", (err) => {
-      if (err) return done(err);
-      done();
-    });
+    pool.query(
+      "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user",
+      (err) => {
+        if (err) return done(err);
+        done();
+      }
+    );
   });
 
   describe("TC-201-5 User succesfully registered", function () {
