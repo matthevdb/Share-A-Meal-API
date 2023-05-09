@@ -205,25 +205,30 @@ let controller = {
   },
   deleteUser: (req, res, next) => {
     let id = req.params.id;
-    let userId = users.findIndex((user) => user.id == id);
 
-    if (userId == -1) {
-      const error = {
-        status: 404,
-        message: `User with id ${id} not found.`,
-        data: {},
-      };
+    pool.getConnection((error, connection) => {
+      connection.query(
+        "DELETE FROM user WHERE id = ?",
+        [id],
+        (error, result) => {
+          if (result.affectedRows == 0) {
+            const error = {
+              status: 404,
+              message: `User with id ${id} not found.`,
+              data: {},
+            };
 
-      next(error);
-    } else {
-      users.splice(userId, 1);
-
-      res.status(200).json({
-        status: 200,
-        message: `User with id ${id} deleted.`,
-        data: {},
-      });
-    }
+            next(error);
+          } else {
+            res.status(200).json({
+              status: 200,
+              message: `User with id ${id} deleted.`,
+              data: {},
+            });
+          }
+        }
+      );
+    });
   },
 };
 

@@ -138,29 +138,38 @@ describe("UC-204 Request user data by ID", function () {
 });
 describe("UC-206 Deleting a user", function () {
   describe("TC-206-4 User succesfully deleted", function () {
+    let userID;
+
+    beforeEach((done) => {
+      pool.query(INSERT_USER, (error, result) => {
+        userID = result.insertId;
+        done();
+      });
+    });
+
     it("should have deleted the user", (done) => {
       chai
         .request(server)
-        .delete("/api/user/1")
+        .delete(`/api/user/${userID}`)
         .end((err, res) => {
           res.body.should.be.an("object");
           res.body.should.has.property("status").to.be.equal(200);
           res.body.should.has.property("message");
           res.body.should.has.property("data");
           let { data, message } = res.body;
-          message.should.be.equal("User with id 1 deleted.");
+          message.should.be.equal(`User with id ${userID} deleted.`);
           data.should.be.an("object").to.be.empty;
 
           chai
             .request(server)
-            .get("/api/user/1")
+            .get(`/api/user/${userID}`)
             .end((err, res) => {
               res.body.should.be.an("object");
               res.body.should.has.property("status").to.be.equal(404);
               res.body.should.has.property("message");
               res.body.should.has.property("data").to.be.empty;
               let { data, message } = res.body;
-              message.should.be.equal("User with id 1 not found.");
+              message.should.be.equal(`User with id ${userID} not found.`);
             });
           done();
         });
