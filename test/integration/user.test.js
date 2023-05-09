@@ -5,20 +5,19 @@ const pool = require("../../database/dbconnection");
 chai.should();
 chai.use(chaiHttp);
 
-beforeEach((done) => {
-  pool.query(
-    "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user",
-    (err) => {
-      if (err) return done(err);
-      done();
-    }
-  );
-});
-
+const CLEAR_DATABASE =
+  "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user";
 const INSERT_USER =
   "INSERT INTO user (emailAdress) VALUES ('mat.vandenberg@student.avans.nl');";
 const INSERT_TWO_USERS =
   "INSERT INTO user (emailAdress) VALUES ('mat.vandenberg@student.avans.nl'), ('mat2.vandenberg@student.avans.nl');";
+
+beforeEach((done) => {
+  pool.query(CLEAR_DATABASE, (err) => {
+    if (err) return done(err);
+    done();
+  });
+});
 
 describe("UC-201 Register as new user", function () {
   describe("TC-201-5 User succesfully registered", function () {
