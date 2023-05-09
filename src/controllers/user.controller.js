@@ -165,30 +165,43 @@ let controller = {
     let { firstName, lastName, emailAdress } = req.body;
     let userId = users.findIndex((user) => user.id == id);
 
-    let changedUser = {
-      id: id,
-      firstName: firstName,
-      lastName: lastName,
-      emailAdress: emailAdress,
-    };
+    pool.getConnection((error, connection) => {
+      connection.query(
+        "UPDATE user SET firstName = ?, lastName = ?, emailAdress = ? WHERE id = ?",
+        [firstName, lastName, emailAdress, id],
+        (err, result) => {
+          if (err) {
+            const error = {
+              status: 404,
+              message: err.sqlMessage,
+              data: {},
+            };
 
-    users[userId] = changedUser;
+            next(error);
+          } else if (result.affectedRows == 0) {
+            const error = {
+              status: 404,
+              message: `User with id ${id} not found.`,
+              data: {},
+            };
 
-    if (userId == -1) {
-      const error = {
-        status: 404,
-        message: `User with id ${id} not found.`,
-        data: {},
-      };
-
-      next(error);
-    } else {
-      res.status(201).json({
-        status: 201,
-        message: `Updated user with id ${id}.`,
-        data: changedUser,
-      });
-    }
+            next(error);
+          } else {
+            pool.query(
+              "SELECT id, firstName, lastName, street, city, isActive, emailAdress, phoneNumber FROM user WHERE id = ?",
+              id,
+              (error, result) => {
+                res.status(201).json({
+                  status: 201,
+                  message: `Updated user with id ${id}.`,
+                  data: result,
+                });
+              }
+            );
+          }
+        }
+      );
+    });
   },
   deleteUser: (req, res, next) => {
     let id = req.params.id;
