@@ -16,6 +16,12 @@ describe("UC-201 Register as new user", function () {
     );
   });
 
+const INSERT_USER =
+  "INSERT INTO user (emailAdress) VALUES ('mat.vandenberg@student.avans.nl');";
+const INSERT_TWO_USERS =
+  "INSERT INTO user (emailAdress) VALUES ('mat.vandenberg@student.avans.nl'), ('mat2.vandenberg@student.avans.nl');";
+
+describe("UC-201 Register as new user", function () {
   describe("TC-201-5 User succesfully registered", function () {
     let userId;
     it("should return relevant response", (done) => {
