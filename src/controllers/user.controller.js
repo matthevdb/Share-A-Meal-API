@@ -1,23 +1,6 @@
 const assert = require("assert");
 const pool = require("../../database/dbconnection");
 
-// In-memory database
-let users = [
-  {
-    id: 1,
-    firstName: "Matthé",
-    lastName: "van den Berg",
-    emailAdress: "mat.vandenberg@student.avans.nl",
-  },
-  {
-    id: 2,
-    firstName: "Robin",
-    lastName: "Schellius",
-    emailAdress: "r.schellius@avans.nl",
-  },
-];
-let index = users.length;
-
 let controller = {
   validateUser: (req, res, next) => {
     let { firstName, lastName, emailAdress } = req.body;
@@ -129,10 +112,10 @@ let controller = {
     });
   },
   getUserProfile: (req, res) => {
-    res.status(200).json({
-      status: 200,
-      message: "Personal user profile succesfully returned.",
-      data: users[0],
+    res.status(404).json({
+      status: 404,
+      message: "This functionality has not been implemented yet.",
+      data: {},
     });
   },
   getUserByID: (req, res, next) => {

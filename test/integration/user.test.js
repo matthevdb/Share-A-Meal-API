@@ -86,19 +86,14 @@ describe("UC-203 Requesting the user profile", function () {
         .get("/api/user/profile")
         .end((err, res) => {
           res.body.should.be.an("object");
-          res.body.should.has.property("status").to.be.equal(200);
+          res.body.should.has.property("status").to.be.equal(404);
           res.body.should.has.property("message");
           res.body.should.has.property("data");
           let { data, message } = res.body;
           message.should.be.equal(
-            "Personal user profile succesfully returned."
+            "This functionality has not been implemented yet."
           );
-          data.should.deep.include({
-            id: 1,
-            firstName: "Matthé",
-            lastName: "van den Berg",
-            emailAdress: "mat.vandenberg@student.avans.nl",
-          });
+          data.should.be.an("object").to.be.empty;
           done();
         });
     });
