@@ -85,7 +85,7 @@ describe("UC-201 Register as new user", function () {
         lastName: "van den Berg",
         street: "Lovensdijkstraat 61",
         city: "Breda",
-        password: "",
+        password: "!$8a",
         emailAdress: "mat.vandenberg@student.avans.nl",
         phoneNumber: "12345678901",
       })
@@ -94,7 +94,7 @@ describe("UC-201 Register as new user", function () {
         res.body.should.has.property("status").to.be.equal(400);
         res.body.should.has
           .property("message")
-          .to.be.equal("Password must be atleast 4 characters long");
+          .to.be.equal("Password must be atleast 5 characters long");
         res.body.should.has.property("data").to.be.empty;
         done();
       });

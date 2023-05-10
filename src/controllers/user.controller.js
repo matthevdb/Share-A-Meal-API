@@ -38,6 +38,16 @@ let controller = {
         next(error);
       }
 
+      if (!password.match(".{5,}")) {
+        const error = {
+          status: 400,
+          message: "Password must be atleast 5 characters long",
+          data: {},
+        };
+
+        next(error);
+      }
+
       next();
     } catch (err) {
       const error = {
