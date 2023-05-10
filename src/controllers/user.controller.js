@@ -8,14 +8,18 @@ let controller = {
       lastName,
       street,
       city,
+      isActive,
       emailAdress,
       password,
       phoneNumber,
     } = req.body;
 
     try {
-      if (req.body.isActive) {
-        assert(typeof isActive === "int", "isActive must be an int");
+      req.body.isActive =
+        req.body.isActive !== undefined ? parseInt(req.body.isActive) : 1;
+
+      if (isActive) {
+        assert(typeof isActive === "number", "isActive must be an int");
       }
 
       assert(typeof firstName === "string", "firstName must be a string");
@@ -86,7 +90,7 @@ let controller = {
 
     pool.getConnection((error, connection) => {
       connection.query(
-        "INSERT INTO user (firstName, lastName, street, city, isActive, emailAdress, phoneNumber) VALUES (?, ?, ?, ?, ? OR 1, ?, ?)",
+        "INSERT INTO user (firstName, lastName, street, city, isActive, emailAdress, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?)",
         [firstName, lastName, street, city, isActive, emailAdress, phoneNumber],
         (err, result) => {
           if (err) {
