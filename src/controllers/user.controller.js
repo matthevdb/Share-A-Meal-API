@@ -274,6 +274,7 @@ let controller = {
           }
         }
       );
+      connection.release();
     });
   },
   deleteUser: (req, res, next) => {
@@ -301,6 +302,7 @@ let controller = {
           }
         }
       );
+      connection.release();
     });
   },
 };
