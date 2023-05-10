@@ -49,23 +49,23 @@ jobs:
         run: |
           npm test -- --DB_PASSWORD ${{env.MYSQL_ROOT_PASSWORD}} --DB_USER root --DB_NAME ${{env.DB_DATABASE}}
 
-  # Railway-deploy:
-  #   needs: integrationtests
-  #   runs-on: ubuntu-latest
-  #   environment:
-  #     name: Railway # naam van mijn environment op GitHub
-  #   steps:
-  #     - name: Clone repository
-  #       uses: actions/checkout@main
+  Railway-deploy:
+    needs: integrationtests
+    runs-on: ubuntu-latest
+    environment:
+      name: Railway
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@main
 
-  #     - name: "Current token"
-  #       run: |
-  #         echo "secrets.RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}"
+      - name: "Current token"
+        run: |
+          echo "secrets.RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}"
 
-  #     - name: Install Railway
-  #       run: npm i -g @railway/cli
+      - name: Install Railway
+        run: npm i -g @railway/cli
 
-  #     - name: Deploy server to Railway
-  #       run: railway up
-  #       env:
-  #         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Deploy server to Railway
+        run: railway up
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
