@@ -81,12 +81,13 @@ let controller = {
       city,
       isActive,
       emailAdress,
+      password,
       phoneNumber,
     } = req.body;
 
     pool.getConnection((error, connection) => {
       connection.query(
-        "INSERT INTO user (firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO user (firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         [
           firstName,
           lastName,
@@ -120,7 +121,7 @@ let controller = {
             const id = result.insertId;
 
             connection.query(
-              "SELECT id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber FROM user WHERE id = ?",
+              "SELECT * FROM user WHERE id = ?",
               id,
               (error, result) => {
                 res.status(201).json({
@@ -224,12 +225,13 @@ let controller = {
       city,
       isActive,
       emailAdress,
+      password,
       phoneNumber,
     } = req.body;
 
     pool.getConnection((error, connection) => {
       connection.query(
-        "UPDATE user SET firstName = ?, lastName = ?, street = ?, city = ?, isActive = ?, emailAdress = ?, phoneNumber = ? WHERE id = ?",
+        "UPDATE user SET firstName = ?, lastName = ?, street = ?, city = ?, isActive = ?, emailAdress = ?, password = ?, phoneNumber = ? WHERE id = ?",
         [
           firstName,
           lastName,
@@ -237,6 +239,7 @@ let controller = {
           city,
           isActive,
           emailAdress,
+          password,
           phoneNumber,
           id,
         ],
@@ -259,7 +262,7 @@ let controller = {
             next(error);
           } else {
             pool.query(
-              "SELECT id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber FROM user WHERE id = ?",
+              "SELECT * FROM user WHERE id = ?",
               id,
               (error, result) => {
                 res.status(200).json({
