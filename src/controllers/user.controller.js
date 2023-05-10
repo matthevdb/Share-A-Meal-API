@@ -60,12 +60,20 @@ let controller = {
     }
   },
   addUser: (req, res, next) => {
-    let { firstName, lastName, emailAdress } = req.body;
+    let {
+      firstName,
+      lastName,
+      street,
+      city,
+      isActive,
+      emailAdress,
+      phoneNumber,
+    } = req.body;
 
     pool.getConnection((error, connection) => {
       connection.query(
-        "INSERT INTO user (firstName, lastName, emailAdress) VALUES (?, ?, ?)",
-        [firstName, lastName, emailAdress],
+        "INSERT INTO user (firstName, lastName, street, city, isActive, emailAdress, phoneNumber) VALUES (?, ?, ?, ?, ? OR 1, ?, ?)",
+        [firstName, lastName, street, city, isActive, emailAdress, phoneNumber],
         (err, result) => {
           if (err) {
             if (err.code == "ER_DUP_ENTRY") {
@@ -89,7 +97,7 @@ let controller = {
             const id = result.insertId;
 
             connection.query(
-              "SELECT id, firstName, lastName, emailAdress FROM user WHERE id = ?",
+              "SELECT id, firstName, lastName, street, city, isActive, emailAdress, phoneNumber FROM user WHERE id = ?",
               id,
               (error, result) => {
                 res.status(201).json({
