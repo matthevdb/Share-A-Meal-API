@@ -3,12 +3,31 @@ const pool = require("../../database/dbconnection");
 
 let controller = {
   validateUser: (req, res, next) => {
-    let { firstName, lastName, emailAdress } = req.body;
+    let {
+      firstName,
+      lastName,
+      street,
+      city,
+      emailAdress,
+      password,
+      phoneNumber,
+    } = req.body;
 
     try {
+      if (req.body.isActive) {
+        console.log("isActive detected");
+        assert(typeof isActive === "int", "isActive must be an int");
+      } else {
+        console.log("No isActive detected");
+      }
+
       assert(typeof firstName === "string", "firstName must be a string");
       assert(typeof lastName === "string", "lastName must be a string");
+      assert(typeof street === "string", "street must be a string");
+      assert(typeof city === "string", "city must be a string");
       assert(typeof emailAdress === "string", "emailAdress must be a string");
+      assert(typeof password === "string", "password must be a string");
+      assert(typeof phoneNumber === "string", "phoneNumber must be a string");
 
       next();
     } catch (err) {
