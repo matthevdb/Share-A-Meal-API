@@ -15,7 +15,7 @@ router.get("/api/user/profile", controller.getUserProfile);
 router.get("/api/user/:id", controller.getUserByID);
 
 // UC-205 Wijzigen van usergegevens
-router.put("/api/user/:id", controller.validateUser, controller.changeUserData);
+router.put("/api/user/:id", controller.validateUser, controller.updateUserData);
 
 // UC-206 Verwijderen van user
 router.delete("/api/user/:id", controller.deleteUser);

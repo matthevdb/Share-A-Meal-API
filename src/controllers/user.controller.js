@@ -206,7 +206,7 @@ let controller = {
       }
     );
   },
-  changeUserData: (req, res, next) => {
+  updateUserData: (req, res, next) => {
     let id = req.params.id;
     let { firstName, lastName, emailAdress } = req.body;
 
