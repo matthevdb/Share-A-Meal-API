@@ -153,7 +153,6 @@ describe("UC-201 Register as new user", function () {
       })
       .end((err, res) => {
         res.body.should.be.an("object");
-        console.log(res.body.message);
         res.body.should.has.property("status").to.be.equal(201);
         res.body.should.has
           .property("data")
