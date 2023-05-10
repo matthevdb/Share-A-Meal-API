@@ -163,7 +163,6 @@ let controller = {
           phoneNumber,
         ],
         (error, result) => {
-          console.log(error);
           if (result.length == 0) {
             const error = {
               status: 404,
