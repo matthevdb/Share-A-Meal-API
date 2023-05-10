@@ -15,10 +15,8 @@ let controller = {
 
     try {
       if (req.body.isActive) {
-        console.log("isActive detected");
         assert(typeof isActive === "int", "isActive must be an int");
       } else {
-        console.log("No isActive detected");
       }
 
       assert(typeof firstName === "string", "firstName must be a string");
