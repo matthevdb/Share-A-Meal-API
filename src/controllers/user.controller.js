@@ -48,6 +48,20 @@ let controller = {
         next(error);
       }
 
+      if (
+        !phoneNumber.match(
+          "^(\\+\\d{1,2}\\s?)?1?\\-?\\.?\\s?(?\\d{3})?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$"
+        )
+      ) {
+        const error = {
+          status: 400,
+          message: "You must provide a valid phone number",
+          data: {},
+        };
+
+        next(error);
+      }
+
       next();
     } catch (err) {
       const error = {
