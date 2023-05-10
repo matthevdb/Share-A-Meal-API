@@ -163,6 +163,7 @@ describe("UC-201 Register as new user", function () {
             street: "Lovensdijkstraat 61",
             city: "Breda",
             emailAdress: "mat.vandenberg@student.avans.nl",
+            password: "secret",
             phoneNumber: "12345678901",
           });
         res.body.data.should.has.property("id");
