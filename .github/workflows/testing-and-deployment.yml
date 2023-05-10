@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - testing-and-deployment
 
 jobs:
   integrationtests:
