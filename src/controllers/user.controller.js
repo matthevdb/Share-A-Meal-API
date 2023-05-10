@@ -208,12 +208,29 @@ let controller = {
   },
   updateUserData: (req, res, next) => {
     let id = req.params.id;
-    let { firstName, lastName, emailAdress } = req.body;
+    let {
+      firstName,
+      lastName,
+      street,
+      city,
+      isActive,
+      emailAdress,
+      phoneNumber,
+    } = req.body;
 
     pool.getConnection((error, connection) => {
       connection.query(
-        "UPDATE user SET firstName = ?, lastName = ?, emailAdress = ? WHERE id = ?",
-        [firstName, lastName, emailAdress, id],
+        "UPDATE user SET firstName = ?, lastName = ?, street = ?, city = ?, isActive = ?, emailAdress = ?, phoneNumber = ? WHERE id = ?",
+        [
+          firstName,
+          lastName,
+          street,
+          city,
+          isActive,
+          emailAdress,
+          phoneNumber,
+          id,
+        ],
         (err, result) => {
           if (err) {
             const error = {
@@ -233,13 +250,13 @@ let controller = {
             next(error);
           } else {
             pool.query(
-              "SELECT id, firstName, lastName, street, city, isActive, emailAdress, phoneNumber FROM user WHERE id = ?",
+              "SELECT id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber FROM user WHERE id = ?",
               id,
               (error, result) => {
-                res.status(201).json({
-                  status: 201,
+                res.status(200).json({
+                  status: 200,
                   message: `Updated user with id ${id}.`,
-                  data: result,
+                  data: result[0],
                 });
               }
             );
