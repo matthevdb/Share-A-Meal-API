@@ -180,7 +180,7 @@ describe("UC-202 Requesting an overview of users", function () {
     });
   });
 
-  it("TC-202-1 display all users", (done) => {
+  it("TC-202-1 should display all users", (done) => {
     chai
       .request(server)
       .get("/api/user")
