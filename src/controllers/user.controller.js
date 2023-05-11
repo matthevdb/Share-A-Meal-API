@@ -50,7 +50,7 @@ let controller = {
         next(error);
       }
 
-      if (!phoneNumber.match("[0-9]{5,15}")) {
+      if (!phoneNumber.match(/^(06)(-| )?[0-9]{8}$/gm)) {
         const error = {
           status: 400,
           message: "You must provide a valid phone number",
