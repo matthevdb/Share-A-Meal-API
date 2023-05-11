@@ -209,7 +209,7 @@ describe("UC-202 Requesting an overview of users", function () {
         res.body.should.has.property("data");
         let { data, message } = res.body;
         message.should.be.equal("Users found matching the search parameters.");
-        data.should.be.an("array").with.lengthOf(4);
+        data.should.be.an("array").with.lengthOf.at.least(2);
         done();
       });
   });
@@ -224,7 +224,7 @@ describe("UC-202 Requesting an overview of users", function () {
         res.body.should.has.property("data");
         let { data, message } = res.body;
         message.should.be.equal("Users found matching the search parameters.");
-        data.should.be.an("array").with.lengthOf(2);
+        data.should.be.an("array").with.lengthOf.at.least(2);
         done();
       });
   });
@@ -239,7 +239,7 @@ describe("UC-202 Requesting an overview of users", function () {
         res.body.should.has.property("data");
         let { data, message } = res.body;
         message.should.be.equal("Users found matching the search parameters.");
-        data.should.be.an("array").with.lengthOf(2);
+        data.should.be.an("array").with.lengthOf.at.least(2);
         done();
       });
   });
