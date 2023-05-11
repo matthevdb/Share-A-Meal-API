@@ -425,13 +425,14 @@ describe("UC-205 Updating user data", () => {
       .request(server)
       .put(`/api/user/${userID}`)
       .send({
-        firstName: "Matthé",
-        lastName: "van den Berg",
-        street: "Lovensdijkstraat 61",
-        city: "Breda",
-        emailAdress: "m.vandenberg@avans.nl",
+        firstName: "John",
+        lastName: "Doe",
+        street: "",
+        city: "",
+        isActive: 1,
+        emailAdress: "j.doe@server.com",
         password: "Secret12",
-        phoneNumber: "06 12345678",
+        phoneNumber: "06 12425475",
       })
       .end((err, res) => {
         res.body.should.be.an("object");
@@ -443,13 +444,14 @@ describe("UC-205 Updating user data", () => {
           .property("data")
           .to.be.an("object")
           .to.deep.include({
-            firstName: "Matthé",
-            lastName: "van den Berg",
-            street: "Lovensdijkstraat 61",
-            city: "Breda",
-            emailAdress: "m.vandenberg@avans.nl",
+            firstName: "John",
+            lastName: "Doe",
+            street: "",
+            city: "",
+            isActive: 1,
+            emailAdress: "j.doe@server.com",
             password: "Secret12",
-            phoneNumber: "06 12345678",
+            phoneNumber: "06 12425475",
           });
         res.body.data.should.has.property("id").to.equal(userID);
         done();
