@@ -11,8 +11,7 @@ const SYSINFO = {
 };
 
 app.use("*", (req, res, next) => {
-  const method = req.method;
-  console.log(`Methode: ${method} has been called`);
+  console.log(`${req.method} ${req.baseUrl} has been called`);
   next();
 });
 
