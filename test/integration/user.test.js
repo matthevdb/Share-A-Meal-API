@@ -10,13 +10,13 @@ const CLEAR_DATABASE =
   "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user; ALTER TABLE user AUTO_INCREMENT = 1";
 const INSERT_USER =
   "INSERT INTO user (firstName, lastName, street, city, emailAdress, password, phoneNumber) " +
-  "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 'm.vandenberg@avans.nl', 'secret', '12345678901');";
+  "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 'm.vandenberg@avans.nl', 'Secret12', '12345678901');";
 const INSERT_FOUR_USERS =
   "INSERT INTO user (firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber) " +
-  "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 1, 'm.vandenberg@avans.nl', 'secret', '12345678901'), " +
-  "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 1, 'j.doe@avans.nl', 'secret', '09876543210'), " +
-  "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 0, 'x.inactive@avans.nl', 'secret', '09847653210'), " +
-  "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 0, 'x.inactivetwo@avans.nl', 'secret', '09021374586');";
+  "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 1, 'm.vandenberg@avans.nl', 'Secret12', '12345678901'), " +
+  "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 1, 'j.doe@avans.nl', 'Secret12', '09876543210'), " +
+  "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 0, 'x.inactive@avans.nl', 'Secret12', '09847653210'), " +
+  "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 0, 'x.inactivetwo@avans.nl', 'Secret12', '09021374586');";
 
 beforeEach((done) => {
   pool.query(CLEAR_DATABASE, (err) => {
@@ -39,7 +39,7 @@ describe("UC-201 Register as new user", function () {
         lastName: "van den Berg",
         street: "Lovensdijkstraat 61",
         // Missing city
-        password: "secret",
+        password: "Secret12",
         emailAdress: "mat.vandenberg@student.avans.nl",
         phoneNumber: "12345678901",
       })
@@ -62,7 +62,7 @@ describe("UC-201 Register as new user", function () {
         lastName: "van den Berg",
         street: "Lovensdijkstraat 61",
         city: "Breda",
-        password: "secret",
+        password: "Secret12",
         emailAdress: "invalid.emailadress@",
         phoneNumber: "12345678901",
       })
@@ -85,7 +85,7 @@ describe("UC-201 Register as new user", function () {
         lastName: "van den Berg",
         street: "Lovensdijkstraat 61",
         city: "Breda",
-        password: "!$8a",
+        password: "Secret1",
         emailAdress: "m.vandenberg@avans.nl",
         phoneNumber: "12345678901",
       })
@@ -94,7 +94,7 @@ describe("UC-201 Register as new user", function () {
         res.body.should.has.property("status").to.be.equal(400);
         res.body.should.has
           .property("message")
-          .to.be.equal("Password must be atleast 5 characters long");
+          .to.be.equal("You must provide a valid password");
         res.body.should.has.property("data").to.be.empty;
         done();
       });
@@ -108,7 +108,7 @@ describe("UC-201 Register as new user", function () {
         lastName: "van den Berg",
         street: "Lovensdijkstraat 61",
         city: "Breda",
-        password: "secret",
+        password: "Secret12",
         emailAdress: "m.vandenberg@avans.nl",
         phoneNumber: "12345678901",
       })
@@ -122,7 +122,7 @@ describe("UC-201 Register as new user", function () {
         lastName: "van den Berg",
         street: "Lovensdijkstraat 61",
         city: "Breda",
-        password: "secret",
+        password: "Secret12",
         emailAdress: "m.vandenberg@avans.nl",
         phoneNumber: "12345678901",
       })
@@ -147,7 +147,7 @@ describe("UC-201 Register as new user", function () {
         lastName: "van den Berg",
         street: "Lovensdijkstraat 61",
         city: "Breda",
-        password: "secret",
+        password: "Secret12",
         emailAdress: "m.vandenberg@avans.nl",
         phoneNumber: "12345678901",
       })
@@ -163,7 +163,7 @@ describe("UC-201 Register as new user", function () {
             street: "Lovensdijkstraat 61",
             city: "Breda",
             emailAdress: "m.vandenberg@avans.nl",
-            password: "secret",
+            password: "Secret12",
             phoneNumber: "12345678901",
           });
         res.body.data.should.has.property("id");
@@ -355,7 +355,7 @@ describe("UC-205 Updating user data", () => {
         lastName: "van den Berg",
         street: "Lovensdijkstraat 61",
         city: "Breda",
-        password: "secret",
+        password: "Secret12",
         phoneNumber: "12345678901",
       })
       .end((err, res) => {
@@ -381,7 +381,7 @@ describe("UC-205 Updating user data", () => {
         street: "Lovensdijkstraat 61",
         city: "Breda",
         emailAdress: "m.vandenberg@avans.nl",
-        password: "secret",
+        password: "Secret12",
         phoneNumber: "",
       })
       .end((err, res) => {
@@ -404,7 +404,7 @@ describe("UC-205 Updating user data", () => {
         street: "Lovensdijkstraat 61",
         city: "Breda",
         emailAdress: "m.vandenberg@avans.nl",
-        password: "secret",
+        password: "Secret12",
         phoneNumber: "12345678901",
       })
       .end((err, res) => {
@@ -430,7 +430,7 @@ describe("UC-205 Updating user data", () => {
         street: "Lovensdijkstraat 61",
         city: "Breda",
         emailAdress: "m.vandenberg@avans.nl",
-        password: "secret",
+        password: "Secret12",
         phoneNumber: "12345678901",
       })
       .end((err, res) => {
@@ -448,7 +448,7 @@ describe("UC-205 Updating user data", () => {
             street: "Lovensdijkstraat 61",
             city: "Breda",
             emailAdress: "m.vandenberg@avans.nl",
-            password: "secret",
+            password: "Secret12",
             phoneNumber: "12345678901",
           });
         res.body.data.should.has.property("id").to.equal(userID);

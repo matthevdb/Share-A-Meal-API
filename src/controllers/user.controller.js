@@ -40,10 +40,10 @@ let controller = {
         next(error);
       }
 
-      if (!password.match(".{5,}")) {
+      if (!password.match(/^(?=.*[A-Z])(?=.*\d).{8,}$/gm)) {
         const error = {
           status: 400,
-          message: "Password must be atleast 5 characters long",
+          message: "You must provide a valid password",
           data: {},
         };
 
