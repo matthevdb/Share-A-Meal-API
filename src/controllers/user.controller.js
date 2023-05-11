@@ -30,9 +30,7 @@ let controller = {
       assert(typeof password === "string", "password must be a string");
       assert(typeof phoneNumber === "string", "phoneNumber must be a string");
 
-      if (
-        !emailAdress.match("^[a-zA-Z0-9.]{3,64}@[a-z0-9.]{3,255}.[a-z]{2,}$")
-      ) {
+      if (!emailAdress.match(/^[a-z]{1}\.[a-z]{2,}@[a-z]{2,}\.[a-z]{2,3}$/gm)) {
         const error = {
           status: 400,
           message: "You must provide a valid emailaddress",
