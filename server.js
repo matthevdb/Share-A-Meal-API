@@ -11,7 +11,9 @@ const SYSINFO = {
 };
 
 app.use("*", (req, res, next) => {
-  console.log(`${req.method} ${req.baseUrl} has been called`);
+  let time = new Date().toISOString().replace(/T/, " ").replace(/\..+/, "");
+  console.log(`[${time}] ${req.method} ${req.baseUrl}`);
+  console.log(`Body: ${JSON.stringify(req.body)}`);
   next();
 });
 
@@ -38,7 +40,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Share a Meal server listening on port ${port}`);
 });
 
 module.exports = app;
