@@ -59,6 +59,28 @@ let controller = {
       }
     );
   },
+  validateToken: (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      next({
+        status: 401,
+        message: "Not authorized",
+        data: {},
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    jwt.verify(token, jwtSecretkey, (err, payload) => {
+      if (err) {
+        next({ status: 401, message: "Invalid token", data: {} });
+      }
+
+      req.userId = payload.userId;
+      next();
+    });
+  },
 };
 
 module.exports = controller;

@@ -1,23 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/user.controller");
+const userController = require("../controllers/user.controller");
+const authController = require("../controllers/auth.controller");
 
 // UC-201 Registreren als nieuwe user
-router.post("/api/user", controller.validateUser, controller.addUser);
+router.post("/api/user", userController.validateUser, userController.addUser);
 
 // UC-202 Opvragen van overzicht van users
-router.get("/api/user", controller.getAllUsers);
+router.get("/api/user", userController.getAllUsers);
 
 // UC-203 Opvragen van gebruikersprofiel
-router.get("/api/user/profile", controller.getUserProfile);
+router.get("/api/user/profile", userController.getUserProfile);
 
 // UC-204 Opvragen van usergegevens bij ID
-router.get("/api/user/:id", controller.getUserByID);
+router.get("/api/user/:id", userController.getUserByID);
 
 // UC-205 Wijzigen van usergegevens
-router.put("/api/user/:id", controller.validateUser, controller.updateUserData);
+router.put(
+  "/api/user/:id",
+  userController.validateUser,
+  userController.updateUserData
+);
 
 // UC-206 Verwijderen van user
-router.delete("/api/user/:id", controller.deleteUser);
+router.delete("/api/user/:id", userController.deleteUser);
 
 module.exports = router;
