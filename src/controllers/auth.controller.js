@@ -33,7 +33,7 @@ let controller = {
 
           jwt.sign(payload, jwtSecretkey, { expiresIn: "2d" }, (err, token) => {
             res.status(200).json({
-              code: 200,
+              status: 200,
               message: "User logged in",
               data: { ...userinfo, token },
             });
