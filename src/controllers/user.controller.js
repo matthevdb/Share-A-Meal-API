@@ -244,7 +244,7 @@ let controller = {
           if (err) {
             const error = {
               status: 404,
-              message: err.sqlMessage,
+              message: `User with emailaddress ${emailAdress} already exists`,
               data: {},
             };
 
