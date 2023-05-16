@@ -317,17 +317,36 @@ describe("UC-203 Requesting the user profile", function () {
   });
 });
 describe("UC-204 Request user data by ID", function () {
-  let userID;
+  let token;
 
   beforeEach((done) => {
-    pool.query(INSERT_USER, (error, result) => {
-      userID = result.insertId;
-      done();
+    pool.query(INSERT_USER, () => {
+      chai
+        .request(server)
+        .post("/api/login")
+        .send({
+          emailAddress: "m.vandenberg@avans.nl",
+          password: "Secret12",
+        })
+        .end((err, res) => {
+          token = res.body.data.token;
+          done();
+        });
     });
   });
 
-  it.skip("TC-204-1 should not return user when token is invalid", function (done) {
-    // To be implemented
+  it("TC-204-1 should not return user when token is invalid", function (done) {
+    chai
+      .request(server)
+      .get("/api/user/1")
+      .set("authorization", "Bearer dslkjfoiasd.f32jflkd.d")
+      .end((err, res) => {
+        res.body.should.be.an("object");
+        res.body.should.has.property("status").to.be.equal(401);
+        res.body.should.has.property("message").to.be.equal("Invalid token");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
   });
 
   it("TC-204-2 should not return user data when userID does not exist", function (done) {
@@ -347,16 +366,17 @@ describe("UC-204 Request user data by ID", function () {
   it("TC-204-3 should return user data when userID exists", function (done) {
     chai
       .request(server)
-      .get(`/api/user/${userID}`)
+      .get("/api/user/1")
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(200);
         res.body.should.has.property("message");
         res.body.should.has.property("data");
         let { data, message } = res.body;
-        message.should.be.equal(`User with id ${userID} found.`);
+        message.should.be.equal(`User with id 1 found.`);
         data.should.be.an("object").to.deep.include({
-          id: userID,
+          id: 1,
           firstName: "Matthé",
           lastName: "van den Berg",
           street: "Lovensdijkstraat 61",
