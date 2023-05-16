@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
 const userRouter = require("./src/routes/user.routes");
+const authRouter = require("./src/routes/auth.routes");
 
 const SYSINFO = {
   studentName: "Matthé van den Berg",
@@ -26,6 +27,7 @@ app.get("/api/info", (req, res) => {
 });
 
 app.use(userRouter);
+app.use(authRouter);
 
 app.use("*", (req, res) => {
   res.status(404).json({
