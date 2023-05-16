@@ -260,27 +260,60 @@ describe("UC-202 Requesting an overview of users", function () {
   });
 });
 describe("UC-203 Requesting the user profile", function () {
-  describe.skip("TC-203-1 should not return user profile when token is invalid", function () {
-    // To be implemented
-  });
-  describe("TC-203-2 User has logged in with valid token", function () {
-    it("should return user data", (done) => {
+  let token;
+
+  beforeEach((done) => {
+    pool.query(INSERT_USER, () => {
       chai
         .request(server)
-        .get("/api/user/profile")
+        .post("/api/login")
+        .send({
+          emailAddress: "m.vandenberg@avans.nl",
+          password: "Secret12",
+        })
         .end((err, res) => {
-          res.body.should.be.an("object");
-          res.body.should.has.property("status").to.be.equal(404);
-          res.body.should.has.property("message");
-          res.body.should.has.property("data");
-          let { data, message } = res.body;
-          message.should.be.equal(
-            "This functionality has not been implemented yet."
-          );
-          data.should.be.an("object").to.be.empty;
+          token = res.body.data.token;
           done();
         });
     });
+  });
+
+  it("TC-203-1 should not return user profile when token is invalid", (done) => {
+    chai
+      .request(server)
+      .get("/api/user/profile")
+      .set("authorization", "Bearer dslkjfoiasd.f32jflkd.d")
+      .end((err, res) => {
+        res.body.should.be.an("object");
+        res.body.should.has.property("status").to.be.equal(401);
+        res.body.should.has.property("message").to.be.equal("Invalid token");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
+  });
+  it("TC-203-2 should return user profile when token is valid", (done) => {
+    chai
+      .request(server)
+      .get("/api/user/profile")
+      .set("authorization", "Bearer " + token)
+      .end((err, res) => {
+        res.body.should.be.an("object");
+        res.body.should.has.property("status").to.be.equal(200);
+        res.body.should.has
+          .property("message")
+          .to.be.equal("User profile succesfully returned");
+        data.should.be.an("object").to.be.equal({
+          id: 1,
+          firstName: "Matthé",
+          lastName: "van den Berg",
+          street: "Lovensdijkstraat 61",
+          city: "Breda",
+          password: "Secret12",
+          emailAdress: "m.vandenberg@avans.nl",
+          phoneNumber: "06 12345678",
+        });
+        done();
+      });
   });
 });
 describe("UC-204 Request user data by ID", function () {
