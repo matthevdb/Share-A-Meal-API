@@ -1,8 +1,25 @@
 const pool = require("../../database/dbconnection");
 const jwt = require("jsonwebtoken");
 const jwtSecretkey = "insaneSecureKey";
+const assert = require("assert");
 
 let controller = {
+  validateLoginBody: (req, res, next) => {
+    let { emailAddress, password } = req.body;
+
+    try {
+      assert(typeof emailAddress === "string", "emailAddress must be a string");
+      assert(typeof password === "string", "password must be a string");
+
+      next();
+    } catch (error) {
+      next({
+        status: 400,
+        message: error.message,
+        data: {},
+      });
+    }
+  },
   login: (req, res, next) => {
     pool.query(
       "SELECT * FROM user WHERE emailAdress = ?",
