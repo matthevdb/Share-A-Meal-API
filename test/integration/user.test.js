@@ -615,14 +615,14 @@ describe("UC-206 Deleting a user", function () {
   it("TC-206-1 should not delete a non-existing user", (done) => {
     chai
       .request(server)
-      .delete(`/api/user/2`)
+      .delete(`/api/user/3`)
       .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(404);
         res.body.should.has.property("message");
         res.body.should.has.property("data");
-        res.body.message.should.be.equal(`User with id 2 not found.`);
+        res.body.message.should.be.equal(`User with id 3 not found.`);
         res.body.data.should.be.an("object").to.be.empty;
         done();
       });
