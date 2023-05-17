@@ -147,7 +147,8 @@ let controller = {
     lastName = query.lastName || "%";
     street = query.street || "%";
     city = query.city || "%";
-    isActive = query.isActive ? 1 : 0 || "%";
+    isActive =
+      query.isActive === undefined ? "%" : query.isActive === "true" ? 1 : 0;
     emailAdress = query.emailAdress || "%";
     phoneNumber = query.phoneNumber || "%";
 
