@@ -228,7 +228,8 @@ let controller = {
     );
   },
   updateUserData: (req, res, next) => {
-    let id = req.params.id;
+    let id = parseInt(req.params.id);
+
     let {
       firstName,
       lastName,
@@ -240,54 +241,55 @@ let controller = {
       phoneNumber,
     } = req.body;
 
-    pool.getConnection((error, connection) => {
-      connection.query(
-        "UPDATE user SET firstName = ?, lastName = ?, street = ?, city = ?, isActive = ?, emailAdress = ?, password = ?, phoneNumber = ? WHERE id = ?",
-        [
-          firstName,
-          lastName,
-          street,
-          city,
-          isActive,
-          emailAdress,
-          password,
-          phoneNumber,
-          id,
-        ],
-        (err, result) => {
-          if (err) {
-            const error = {
-              status: 404,
-              message: `User with emailaddress ${emailAdress} already exists`,
-              data: {},
-            };
-
-            next(error);
-          } else if (result.affectedRows == 0) {
-            const error = {
-              status: 404,
-              message: `User with id ${id} not found.`,
-              data: {},
-            };
-
-            next(error);
-          } else {
-            pool.query(
-              "SELECT * FROM user WHERE id = ?",
+    pool.query(
+      "SELECT COUNT(id) AS 'count' FROM user WHERE id = ?",
+      [id],
+      (err, result) => {
+        if (result[0].count == 0) {
+          return next({
+            status: 404,
+            message: `User with id ${id} not found.`,
+            data: {},
+          });
+        } else if (id !== req.userId) {
+          return next({
+            status: 403,
+            message: "You do not own this data",
+            data: {},
+          });
+        } else {
+          pool.query(
+            "UPDATE user SET firstName = ?, lastName = ?, street = ?, city = ?, isActive = ?, emailAdress = ?, password = ?, phoneNumber = ? WHERE id = ?",
+            [
+              firstName,
+              lastName,
+              street,
+              city,
+              isActive,
+              emailAdress,
+              password,
+              phoneNumber,
               id,
-              (error, result) => {
+            ],
+            (err) => {
+              if (err) {
+                next({
+                  status: 404,
+                  message: `User with emailaddress ${emailAdress} already exists`,
+                  data: {},
+                });
+              } else {
                 res.status(200).json({
                   status: 200,
                   message: `Updated user with id ${id}.`,
-                  data: result[0],
+                  data: { id, ...req.body },
                 });
               }
-            );
-          }
+            }
+          );
         }
-      );
-      connection.release();
-    });
+      }
+    );
   },
   deleteUser: (req, res, next) => {
     let id = req.params.id;
