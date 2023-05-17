@@ -377,6 +377,7 @@ describe("UC-204 Request user data by ID", function () {
     chai
       .request(server)
       .get(`/api/user/2`)
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.has.property("status").to.be.equal(404);
         res.body.should.has.property("message");
