@@ -573,12 +573,21 @@ describe("UC-205 Updating user data", () => {
   });
 });
 describe("UC-206 Deleting a user", function () {
-  let userID;
+  let token;
 
   beforeEach((done) => {
-    pool.query(INSERT_USER, (error, result) => {
-      userID = result.insertId;
-      done();
+    pool.query(INSERT_TWO_USERS, () => {
+      chai
+        .request(server)
+        .post("/api/login")
+        .send({
+          emailAddress: "m.vandenberg@avans.nl",
+          password: "Secret12",
+        })
+        .end((err, res) => {
+          token = res.body.data.token;
+          done();
+        });
     });
   });
 
@@ -586,6 +595,7 @@ describe("UC-206 Deleting a user", function () {
     chai
       .request(server)
       .delete(`/api/user/2`)
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(404);
@@ -596,23 +606,53 @@ describe("UC-206 Deleting a user", function () {
         done();
       });
   });
-  it.skip("TC-206-2 should not delete when user is not logged in", (done) => {
-    // To be implemented
+  it("TC-206-2 should not delete when user is not logged in", (done) => {
+    chai
+      .request(server)
+      .delete("/api/user/1")
+      .end((err, res) => {
+        res.body.should.be.an("object");
+        res.body.should.has.property("status").to.be.equal(401);
+        res.body.should.has.property("message").to.be.equal("Not authorized");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
   });
-  it.skip("TC-206-3 should not delete when logged-in user does not own the data", (done) => {
-    // To be implemented
+  it("TC-206-3 should not delete when logged-in user does not own the data", (done) => {
+    chai
+      .request(server)
+      .post("/api/login")
+      .send({ emailAddress: "j.doe@avans.nl", password: "Secret12" })
+      .end((err, res) => {
+        const wrongToken = res.body.data.token;
+
+        chai
+          .request(server)
+          .delete("/api/user/1")
+          .set("authorization", "Bearer " + wrongToken)
+          .end((err, res) => {
+            res.body.should.be.an("object");
+            res.body.should.has.property("status").to.be.equal(403);
+            res.body.should.has
+              .property("message")
+              .to.be.equal("You do not own this data");
+            res.body.should.has.property("data").to.be.empty;
+            done();
+          });
+      });
   });
   it("TC-206-4 should have succesfully deleted the user", (done) => {
     chai
       .request(server)
-      .delete(`/api/user/${userID}`)
+      .delete("/api/user/1")
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(200);
-        res.body.should.has.property("message");
-        res.body.should.has.property("data");
-        res.body.message.should.be.equal(`User with id ${userID} deleted.`);
-        res.body.data.should.be.an("object").to.be.empty;
+        res.body.should.has
+          .property("message")
+          .to.be.equal("User with id 1 deleted.");
+        res.body.should.has.property("data").to.be.empty;
         done();
       });
   });
