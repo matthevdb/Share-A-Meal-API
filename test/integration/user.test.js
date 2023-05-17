@@ -324,13 +324,15 @@ describe("UC-203 Requesting the user profile", function () {
         res.body.should.has
           .property("message")
           .to.be.equal("User profile succesfully returned");
-        data.should.be.an("object").to.be.equal({
+        res.body.should.has.property("data").to.deep.include({
           id: 1,
           firstName: "Matthé",
           lastName: "van den Berg",
           street: "Lovensdijkstraat 61",
           city: "Breda",
           password: "Secret12",
+          isActive: 1,
+          roles: "editor,guest",
           emailAdress: "m.vandenberg@avans.nl",
           phoneNumber: "06 12345678",
         });
