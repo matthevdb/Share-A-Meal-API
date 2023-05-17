@@ -8,6 +8,10 @@ chai.use(chaiHttp);
 
 const CLEAR_DATABASE =
   "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user; ALTER TABLE user AUTO_INCREMENT = 1";
+const INSERT_TWO_USERS =
+  "INSERT INTO user (firstName, lastName, street, city, emailAdress, password, phoneNumber) " +
+  "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 'm.vandenberg@avans.nl', 'Secret12', '06 12345678'), " +
+  "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 'j.doe@avans.nl', 'Secret12', '06 12345678');";
 const INSERT_USER =
   "INSERT INTO user (firstName, lastName, street, city, emailAdress, password, phoneNumber) " +
   "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 'm.vandenberg@avans.nl', 'Secret12', '06 12345678');";
@@ -390,19 +394,29 @@ describe("UC-204 Request user data by ID", function () {
   });
 });
 describe("UC-205 Updating user data", () => {
-  let userID;
+  let token;
 
   beforeEach((done) => {
-    pool.query(INSERT_USER, (error, result) => {
-      userID = result.insertId;
-      done();
+    pool.query(INSERT_TWO_USERS, (err, res) => {
+      chai
+        .request(server)
+        .post("/api/login")
+        .send({
+          emailAddress: "m.vandenberg@avans.nl",
+          password: "Secret12",
+        })
+        .end((err, res) => {
+          token = res.body.data.token;
+          done();
+        });
     });
   });
 
   it("TC-205-1 should not update when required field emailAddress is missing", (done) => {
     chai
       .request(server)
-      .put(`/api/user/${userID}`)
+      .put("/api/user/1")
+      .set("authorization", "Bearer " + token)
       .send({
         firstName: "Matthé",
         lastName: "van den Berg",
@@ -421,13 +435,43 @@ describe("UC-205 Updating user data", () => {
         done();
       });
   });
-  it.skip("TC-205-2 should not update when logged-in user does not own the data", (done) => {
-    // To be implemented
+  it("TC-205-2 should not update when logged-in user does not own the data", (done) => {
+    chai
+      .request(server)
+      .post("/api/login")
+      .send({ emailAddress: "j.doe@avans.nl", password: "Secret12" })
+      .end((err, res) => {
+        const wrongToken = res.body.data.token;
+
+        chai
+          .request(server)
+          .put("/api/user/1")
+          .set("authorization", "Bearer " + wrongToken)
+          .send({
+            firstName: "Matthé",
+            lastName: "van den Berg",
+            street: "Lovensdijkstraat 61",
+            city: "Breda",
+            emailAdress: "m.vandenberg@avans.nl",
+            password: "Secret12",
+            phoneNumber: "06 12345678",
+          })
+          .end((err, res) => {
+            res.body.should.be.an("object");
+            res.body.should.has.property("status").to.be.equal(403);
+            res.body.should.has
+              .property("message")
+              .to.be.equal("You do not own this data");
+            res.body.should.has.property("data").to.be.empty;
+            done();
+          });
+      });
   });
   it("TC-205-3 should not update when phoneNumber is invalid", (done) => {
     chai
       .request(server)
-      .put(`/api/user/${userID}`)
+      .put("/api/user/1")
+      .set("authorization", "Bearer " + token)
       .send({
         firstName: "Matthé",
         lastName: "van den Berg",
@@ -450,7 +494,8 @@ describe("UC-205 Updating user data", () => {
   it("TC-205-4 should not update a non-existing user", (done) => {
     chai
       .request(server)
-      .put(`/api/user/2`)
+      .put("/api/user/3")
+      .set("authorization", "Bearer " + token)
       .send({
         firstName: "Matthé",
         lastName: "van den Berg",
@@ -465,18 +510,37 @@ describe("UC-205 Updating user data", () => {
         res.body.should.has.property("status").to.be.equal(404);
         res.body.should.has
           .property("message")
-          .to.be.equal(`User with id 2 not found.`);
+          .to.be.equal(`User with id 3 not found.`);
         res.body.should.has.property("data").to.be.empty;
         done();
       });
   });
-  it.skip("TC-205-5 should not update when user is not logged in", (done) => {
-    // To be implemented
+  it("TC-205-5 should not update when user is not logged in", (done) => {
+    chai
+      .request(server)
+      .put("/api/user/1")
+      .send({
+        firstName: "Matthé",
+        lastName: "van den Berg",
+        street: "Lovensdijkstraat 61",
+        city: "Breda",
+        emailAdress: "m.vandenberg@avans.nl",
+        password: "Secret12",
+        phoneNumber: "06 12345678",
+      })
+      .end((err, res) => {
+        res.body.should.be.an("object");
+        res.body.should.has.property("status").to.be.equal(401);
+        res.body.should.has.property("message").to.be.equal("Not authorized");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
   });
   it("TC-205-6 should have succesfully updated the user", (done) => {
     chai
       .request(server)
-      .put(`/api/user/${userID}`)
+      .put("/api/user/1")
+      .set("authorization", "Bearer " + token)
       .send({
         firstName: "John",
         lastName: "Doe",
@@ -492,21 +556,18 @@ describe("UC-205 Updating user data", () => {
         res.body.should.has.property("status").to.be.equal(200);
         res.body.should.has
           .property("message")
-          .to.be.equal(`Updated user with id ${userID}.`);
-        res.body.should.has
-          .property("data")
-          .to.be.an("object")
-          .to.deep.include({
-            firstName: "John",
-            lastName: "Doe",
-            street: "",
-            city: "",
-            isActive: 1,
-            emailAdress: "j.doe@server.com",
-            password: "Secret12",
-            phoneNumber: "06 12425475",
-          });
-        res.body.data.should.has.property("id").to.equal(userID);
+          .to.be.equal("Updated user with id 1.");
+        res.body.should.has.property("data").to.be.an("object").to.include({
+          id: 1,
+          firstName: "John",
+          lastName: "Doe",
+          street: "",
+          city: "",
+          isActive: 1,
+          emailAdress: "j.doe@server.com",
+          password: "Secret12",
+          phoneNumber: "06 12425475",
+        });
         done();
       });
   });
