@@ -181,12 +181,26 @@ let controller = {
       connection.release();
     });
   },
-  getUserProfile: (req, res) => {
-    res.status(404).json({
-      status: 404,
-      message: "This functionality has not been implemented yet.",
-      data: {},
-    });
+  getUserProfile: (req, res, next) => {
+    pool.query(
+      "SELECT * FROM user WHERE id = ?",
+      [req.userId],
+      (err, result) => {
+        if (result.length == 0) {
+          next({
+            status: 404,
+            message: "Logged in user does not exist anymore",
+            data: {},
+          });
+        }
+
+        res.status(200).json({
+          status: 200,
+          message: "User profile succesfully returned",
+          data: result[0],
+        });
+      }
+    );
   },
   getUserByID: (req, res, next) => {
     let id = req.params.id;
