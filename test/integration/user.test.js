@@ -179,9 +179,21 @@ describe("UC-201 Register as new user", function () {
   });
 });
 describe("UC-202 Requesting an overview of users", function () {
+  let token;
+
   beforeEach((done) => {
-    pool.query(INSERT_FOUR_USERS, (error, result) => {
-      done();
+    pool.query(INSERT_FOUR_USERS, () => {
+      chai
+        .request(server)
+        .post("/api/login")
+        .send({
+          emailAddress: "m.vandenberg@avans.nl",
+          password: "Secret12",
+        })
+        .end((err, res) => {
+          token = res.body.data.token;
+          done();
+        });
     });
   });
 
@@ -189,6 +201,7 @@ describe("UC-202 Requesting an overview of users", function () {
     chai
       .request(server)
       .get("/api/user")
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(200);
@@ -206,6 +219,7 @@ describe("UC-202 Requesting an overview of users", function () {
       .get(
         "/api/user?nonexistingfield=acertainvalue&anotherfield=anothercertainvalue"
       )
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(200);
@@ -221,6 +235,7 @@ describe("UC-202 Requesting an overview of users", function () {
     chai
       .request(server)
       .get("/api/user?isActive=0")
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(200);
@@ -236,6 +251,8 @@ describe("UC-202 Requesting an overview of users", function () {
     chai
       .request(server)
       .get("/api/user?isActive=1")
+      .set("authorization", "Bearer " + token)
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(200);
@@ -251,6 +268,7 @@ describe("UC-202 Requesting an overview of users", function () {
     chai
       .request(server)
       .get("/api/user?firstName=John&lastName=Doe")
+      .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
         res.body.should.has.property("status").to.be.equal(200);
