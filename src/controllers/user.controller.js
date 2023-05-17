@@ -15,11 +15,10 @@ let controller = {
     } = req.body;
 
     try {
-      req.body.isActive =
-        req.body.isActive !== undefined ? parseInt(req.body.isActive) : 1;
-
-      if (isActive) {
-        assert(typeof isActive === "number", "isActive must be an int");
+      if (isActive === undefined) {
+        req.body.isActive = true;
+      } else {
+        assert(typeof isActive === "boolean", "isActive must be an boolean");
       }
 
       assert(typeof firstName === "string", "firstName must be a string");
@@ -122,6 +121,11 @@ let controller = {
               "SELECT * FROM user WHERE id = ?",
               id,
               (error, result) => {
+                result = result.map((item) => ({
+                  ...item,
+                  isActive: item.isActive == 1,
+                }));
+
                 res.status(201).json({
                   status: 201,
                   message: `Added user with id ${id}.`,
@@ -143,7 +147,7 @@ let controller = {
     lastName = query.lastName || "%";
     street = query.street || "%";
     city = query.city || "%";
-    isActive = query.isActive || "%";
+    isActive = query.isActive ? 1 : 0 || "%";
     emailAdress = query.emailAdress || "%";
     phoneNumber = query.phoneNumber || "%";
 
@@ -170,6 +174,11 @@ let controller = {
 
             next(error);
           } else {
+            result = result.map((item) => ({
+              ...item,
+              isActive: item.isActive == 1,
+            }));
+
             res.status(200).json({
               status: 200,
               message: "Users found matching the search parameters.",
@@ -194,10 +203,15 @@ let controller = {
           });
         }
 
+        result = result.map((item) => ({
+          ...item,
+          isActive: item.isActive == 1,
+        }));
+
         res.status(200).json({
           status: 200,
           message: "User profile succesfully returned",
-          data: result[0],
+          data: result,
         });
       }
     );
@@ -218,6 +232,11 @@ let controller = {
 
           next(error);
         } else {
+          result = result.map((item) => ({
+            ...item,
+            isActive: item.isActive == 1,
+          }));
+
           res.status(200).json({
             status: 200,
             message: `User with id ${id} found.`,

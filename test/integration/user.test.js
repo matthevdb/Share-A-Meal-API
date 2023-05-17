@@ -230,7 +230,7 @@ describe("UC-202 Requesting an overview of users", function () {
   it("TC-202-3 should return 2 users when filtering on isActive = false", function (done) {
     chai
       .request(server)
-      .get("/api/user?isActive=0")
+      .get("/api/user?isActive=false")
       .set("authorization", "Bearer " + token)
       .end((err, res) => {
         res.body.should.be.an("object");
@@ -246,7 +246,7 @@ describe("UC-202 Requesting an overview of users", function () {
   it("TC-202-4 should return 2 users when filtering on isActive = true", function (done) {
     chai
       .request(server)
-      .get("/api/user?isActive=1")
+      .get("/api/user?isActive=true")
       .set("authorization", "Bearer " + token)
       .set("authorization", "Bearer " + token)
       .end((err, res) => {
@@ -327,7 +327,7 @@ describe("UC-203 Requesting the user profile", function () {
           street: "Lovensdijkstraat 61",
           city: "Breda",
           password: "Secret12",
-          isActive: 1,
+          isActive: true,
           roles: "editor,guest",
           emailAdress: "m.vandenberg@avans.nl",
           phoneNumber: "06 12345678",
@@ -402,7 +402,7 @@ describe("UC-204 Request user data by ID", function () {
           lastName: "van den Berg",
           street: "Lovensdijkstraat 61",
           city: "Breda",
-          isActive: 1,
+          isActive: true,
           emailAdress: "m.vandenberg@avans.nl",
           phoneNumber: "06 12345678",
         });
@@ -563,7 +563,7 @@ describe("UC-205 Updating user data", () => {
         lastName: "Doe",
         street: "",
         city: "",
-        isActive: 1,
+        isActive: true,
         emailAdress: "j.doe@server.com",
         password: "Secret12",
         phoneNumber: "06 12425475",
@@ -580,7 +580,7 @@ describe("UC-205 Updating user data", () => {
           lastName: "Doe",
           street: "",
           city: "",
-          isActive: 1,
+          isActive: true,
           emailAdress: "j.doe@server.com",
           password: "Secret12",
           phoneNumber: "06 12425475",

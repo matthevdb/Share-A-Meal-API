@@ -25,6 +25,11 @@ let controller = {
       "SELECT * FROM user WHERE emailAdress = ?",
       [req.body.emailAddress],
       (err, result) => {
+        result = result.map((item) => ({
+          ...item,
+          isActive: item.isActive == 1,
+        }));
+
         if (err || result.length == 0) {
           next({
             status: 404,

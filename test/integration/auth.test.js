@@ -100,7 +100,7 @@ describe("UC-101 Logging in", function () {
           lastName: "van den Berg",
           street: "Lovensdijkstraat 61",
           city: "Breda",
-          isActive: 1,
+          isActive: true,
           emailAdress: "m.vandenberg@avans.nl",
           phoneNumber: "06 12345678",
         });
