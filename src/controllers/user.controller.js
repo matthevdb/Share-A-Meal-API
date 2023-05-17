@@ -187,7 +187,7 @@ let controller = {
       [req.userId],
       (err, result) => {
         if (result.length == 0) {
-          next({
+          return next({
             status: 404,
             message: "Logged in user does not exist anymore",
             data: {},
