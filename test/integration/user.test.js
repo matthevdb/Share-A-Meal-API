@@ -116,30 +116,30 @@ describe("UC-201 Register as new user", function () {
         emailAdress: "m.vandenberg@avans.nl",
         phoneNumber: "06 12345678",
       })
-      .end();
-
-    chai
-      .request(server)
-      .post("/api/user")
-      .send({
-        firstName: "Matthé",
-        lastName: "van den Berg",
-        street: "Lovensdijkstraat 61",
-        city: "Breda",
-        password: "Secret12",
-        emailAdress: "m.vandenberg@avans.nl",
-        phoneNumber: "06 12345678",
-      })
-      .end((err, res) => {
-        res.body.should.be.an("object");
-        res.body.should.has.property("status").to.be.equal(403);
-        res.body.should.has
-          .property("message")
-          .to.be.equal(
-            "User with email adress m.vandenberg@avans.nl already exists."
-          );
-        res.body.should.has.property("data").to.be.empty;
-        done();
+      .end((req, res) => {
+        chai
+          .request(server)
+          .post("/api/user")
+          .send({
+            firstName: "Matthé",
+            lastName: "van den Berg",
+            street: "Lovensdijkstraat 61",
+            city: "Breda",
+            password: "Secret12",
+            emailAdress: "m.vandenberg@avans.nl",
+            phoneNumber: "06 12345678",
+          })
+          .end((err, res) => {
+            res.body.should.be.an("object");
+            res.body.should.has.property("status").to.be.equal(403);
+            res.body.should.has
+              .property("message")
+              .to.be.equal(
+                "User with email adress m.vandenberg@avans.nl already exists."
+              );
+            res.body.should.has.property("data").to.be.empty;
+            done();
+          });
       });
   });
   it("TC-201-5 should have succesfully registered the user", (done) => {
