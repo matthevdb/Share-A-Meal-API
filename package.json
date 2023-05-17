@@ -4,8 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon index",
-    "test": "mocha test/**/*.test.js --exit"
+    "dev": "nodemon",
+    "test": "mocha test/**/*.test.js --exit",
+    "debug": "nodemon --inspect"
   },
   "author": "",
   "license": "ISC",
