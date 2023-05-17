@@ -292,32 +292,35 @@ let controller = {
     );
   },
   deleteUser: (req, res, next) => {
-    let id = req.params.id;
+    let id = parseInt(req.params.id);
 
-    pool.getConnection((error, connection) => {
-      connection.query(
-        "DELETE FROM user WHERE id = ?",
-        [id],
-        (error, result) => {
-          if (result.affectedRows == 0) {
-            const error = {
-              status: 404,
-              message: `User with id ${id} not found.`,
-              data: {},
-            };
-
-            next(error);
-          } else {
+    pool.query(
+      "SELECT COUNT(id) AS 'count' FROM user WHERE id = ?",
+      [id],
+      (err, result) => {
+        if (result[0].count == 0) {
+          return next({
+            status: 404,
+            message: `User with id ${id} not found.`,
+            data: {},
+          });
+        } else if (id !== req.userId) {
+          return next({
+            status: 403,
+            message: "You do not own this data",
+            data: {},
+          });
+        } else {
+          pool.query("DELETE FROM user WHERE id = ?", [id], (error, result) => {
             res.status(200).json({
               status: 200,
               message: `User with id ${id} deleted.`,
               data: {},
             });
-          }
+          });
         }
-      );
-      connection.release();
-    });
+      }
+    );
   },
 };
 
