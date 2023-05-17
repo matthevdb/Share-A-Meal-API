@@ -29,10 +29,6 @@ beforeEach((done) => {
   });
 });
 
-after(() => {
-  pool.end();
-});
-
 describe("UC-201 Register as new user", function () {
   it("TC-201-1 should not accept missing fields", (done) => {
     chai
