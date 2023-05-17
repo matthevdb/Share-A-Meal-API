@@ -68,7 +68,7 @@ let controller = {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      next({
+      return next({
         status: 401,
         message: "Not authorized",
         data: {},
@@ -79,7 +79,7 @@ let controller = {
 
     jwt.verify(token, jwtSecretkey, (err, payload) => {
       if (err) {
-        next({ status: 401, message: "Invalid token", data: {} });
+        return next({ status: 401, message: "Invalid token", data: {} });
       }
 
       req.userId = payload.userId;
