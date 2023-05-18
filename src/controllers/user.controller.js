@@ -121,11 +121,6 @@ let controller = {
               "SELECT * FROM user WHERE id = ?",
               id,
               (error, result) => {
-                result = result.map((item) => ({
-                  ...item,
-                  isActive: item.isActive == 1,
-                }));
-
                 res.status(201).json({
                   status: 201,
                   message: `Added user with id ${id}.`,
@@ -175,11 +170,6 @@ let controller = {
 
             next(error);
           } else {
-            result = result.map((item) => ({
-              ...item,
-              isActive: item.isActive == 1,
-            }));
-
             res.status(200).json({
               status: 200,
               message: "Users found matching the search parameters.",
@@ -203,11 +193,6 @@ let controller = {
             data: {},
           });
         }
-
-        result = result.map((item) => ({
-          ...item,
-          isActive: item.isActive == 1,
-        }));
 
         res.status(200).json({
           status: 200,
@@ -233,11 +218,6 @@ let controller = {
 
           next(error);
         } else {
-          result = result.map((item) => ({
-            ...item,
-            isActive: item.isActive == 1,
-          }));
-
           res.status(200).json({
             status: 200,
             message: `User with id ${id} found.`,
