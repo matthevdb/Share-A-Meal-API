@@ -95,7 +95,7 @@ let controller = {
 
         res.status(201).json({
           status: 201,
-          message: `Added meal with id ${result.insertId}.`,
+          message: `Added meal with id ${result.insertId}`,
           data: { id: result.insertId, ...req.body },
         });
       }
