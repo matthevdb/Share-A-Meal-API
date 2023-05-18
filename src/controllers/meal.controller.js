@@ -34,9 +34,6 @@ let controller = {
             typeof isToTakeHome === "boolean",
             "isToTakeHome must be a boolean"
           );
-      imageUrl === undefined
-        ? (req.body.imageUrl = "")
-        : assert(typeof imageUrl === "string", "imageUrl must be a string");
       allergenes === undefined
         ? (req.body.allergenes = "")
         : assert(
@@ -55,6 +52,7 @@ let controller = {
         "maxAmountOfParticipants must be a number"
       );
       assert(typeof price === "number", "price must be a number");
+      assert(typeof imageUrl === "string", "imageUrl must be a string");
 
       next();
     } catch (err) {
