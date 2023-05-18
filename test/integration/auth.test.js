@@ -5,22 +5,9 @@ const pool = require("../../database/dbconnection");
 chai.should();
 chai.use(chaiHttp);
 
-const CLEAR_DATABASE =
-  "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user; ALTER TABLE user AUTO_INCREMENT = 1";
 const INSERT_USER =
   "INSERT INTO user (firstName, lastName, street, city, emailAdress, password, phoneNumber) " +
   "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 'm.vandenberg@avans.nl', 'Secret12', '06 12345678');";
-
-beforeEach((done) => {
-  pool.query(CLEAR_DATABASE, (err) => {
-    if (err) return done(err);
-    done();
-  });
-});
-
-after(() => {
-  pool.end();
-});
 
 describe("UC-101 Logging in", function () {
   beforeEach((done) => {

@@ -6,8 +6,6 @@ const { it } = require("mocha");
 chai.should();
 chai.use(chaiHttp);
 
-const CLEAR_DATABASE =
-  "DELETE FROM meal_participants_user; DELETE FROM meal; DELETE FROM user; ALTER TABLE user AUTO_INCREMENT = 1";
 const INSERT_TWO_USERS =
   "INSERT INTO user (firstName, lastName, street, city, emailAdress, password, phoneNumber) " +
   "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 'm.vandenberg@avans.nl', 'Secret12', '06 12345678'), " +
@@ -21,13 +19,6 @@ const INSERT_FOUR_USERS =
   "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 1, 'j.doe@avans.nl', 'Secret12', '06 12345678'), " +
   "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 0, 'x.inactive@avans.nl', 'Secret12', '06 12345678'), " +
   "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 0, 'x.inactivetwo@avans.nl', 'Secret12', '06 12345678');";
-
-beforeEach((done) => {
-  pool.query(CLEAR_DATABASE, (err) => {
-    if (err) return done(err);
-    done();
-  });
-});
 
 describe("UC-201 Register as new user", function () {
   it("TC-201-1 should not accept missing fields", (done) => {
