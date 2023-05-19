@@ -338,6 +338,43 @@ let controller = {
       }
     );
   },
+  removeParticipation: (req, res, next) => {
+    let mealId = parseInt(req.params.mealId);
+
+    pool.query(
+      "SELECT COUNT(*) AS count FROM meal WHERE id = ?",
+      mealId,
+      (err, result) => {
+        if (result[0].count == 0) {
+          return res.status(200).json({
+            status: 404,
+            message: `Meal with id ${mealId} not found.`,
+            data: {},
+          });
+        }
+
+        pool.query(
+          "DELETE FROM meal_participants_user WHERE mealId = ? AND userId = ?",
+          [mealId, req.userId],
+          (err, result) => {
+            if (result.affectedRows == 0) {
+              return res.status(404).json({
+                status: 200,
+                message: `User with id ${req.userId} does not have a participation for meal with id ${mealId}.`,
+                data: {},
+              });
+            }
+
+            res.status(200).json({
+              status: 200,
+              message: `User with id ${req.userId} unsubcribed from meal with id ${mealId}`,
+              data: {},
+            });
+          }
+        );
+      }
+    );
+  },
 };
 
 module.exports = controller;

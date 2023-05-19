@@ -40,5 +40,16 @@ router.post(
 );
 
 // UC-402 Afmelden voor maaltijd
+router.delete(
+  "/api/meal/:mealId/participate",
+  authController.validateToken,
+  mealController.removeParticipation
+);
+
+// UC-403 Opvragen van deelnemers
+router.get("/api/meal/:mealId/participants");
+
+// UC-404 Opvragen van details van deelnemer
+router.get("/api/meal/:mealId/participants/:participantId");
 
 module.exports = router;
