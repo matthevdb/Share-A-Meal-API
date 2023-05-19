@@ -33,6 +33,11 @@ router.delete(
 );
 
 // UC-401 Aanmelden voor maaltijd
+router.post(
+  "/api/meal/:mealId/participate",
+  authController.validateToken,
+  mealController.participate
+);
 
 // UC-402 Afmelden voor maaltijd
 
