@@ -243,7 +243,7 @@ let controller = {
             }
 
             res.status(200).json({
-              status: 201,
+              status: 200,
               message: `Updated meal with id ${id}.`,
               data: { id: id, ...req.body },
             });
