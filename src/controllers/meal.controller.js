@@ -287,52 +287,66 @@ let controller = {
     let mealId = parseInt(req.params.mealId);
 
     pool.query(
-      "SELECT COUNT(*) AS count FROM meal_participants_user WHERE mealId = ?; SELECT maxAmountOfParticipants AS max FROM meal WHERE id = ?",
-      [mealId, mealId],
+      "SELECT COUNT(*) AS count FROM meal WHERE id = ?",
+      mealId,
       (err, result) => {
-        let participants = result[0][0].count;
-        let maxParticipants = result[1][0].max;
-
-        if (participants == 0 && result[1].length == 0) {
+        if (result[0].count == 0) {
           return next({
             status: 404,
-            message: "Meal does not exist",
-            data: {},
-          });
-        }
-
-        if (participants == maxParticipants) {
-          return next({
-            status: 200,
-            message: "Max amount of participants reached",
+            message: `Meal with id ${mealId} not found.`,
             data: {},
           });
         }
 
         pool.query(
-          "INSERT INTO meal_participants_user (mealId, userId) VALUES (?, ?)",
-          [mealId, req.userId],
+          "SELECT COUNT(*) AS count FROM meal_participants_user WHERE mealId = ?; SELECT maxAmountOfParticipants AS max FROM meal WHERE id = ?",
+          [mealId, mealId],
           (err, result) => {
             if (err) {
-              if (err.code === "ER_DUP_ENTRY") {
-                return next({
-                  status: 409,
-                  message: "User already registered for this meal",
-                  data: {},
-                });
-              } else if (err.code === "ER_NO_REFERENCED_ROW_2")
-                return next({
-                  status: 404,
-                  message: "Meal does not exist",
-                  data: {},
-                });
+              return next({
+                status: 500,
+                message: "Internal server error",
+                data: {},
+              });
             }
 
-            res.status(200).json({
-              status: 200,
-              message: `User with id ${req.userId} registered for meal with id ${mealId}`,
-              data: {},
-            });
+            let participants = result[0][0].count;
+            let maxParticipants = result[1][0].max;
+
+            if (participants == maxParticipants) {
+              return next({
+                status: 200,
+                message: "Max amount of participants reached",
+                data: {},
+              });
+            }
+
+            pool.query(
+              "INSERT INTO meal_participants_user (mealId, userId) VALUES (?, ?)",
+              [mealId, req.userId],
+              (err, result) => {
+                if (err) {
+                  if (err.code === "ER_DUP_ENTRY") {
+                    return next({
+                      status: 409,
+                      message: "User already registered for this meal",
+                      data: {},
+                    });
+                  } else if (err.code === "ER_NO_REFERENCED_ROW_2")
+                    return next({
+                      status: 404,
+                      message: "Meal does not exist",
+                      data: {},
+                    });
+                }
+
+                res.status(200).json({
+                  status: 200,
+                  message: `User with id ${req.userId} registered for meal with id ${mealId}`,
+                  data: {},
+                });
+              }
+            );
           }
         );
       }
@@ -367,7 +381,7 @@ let controller = {
 
             res.status(200).json({
               status: 200,
-              message: `User with id ${req.userId} unsubcribed from meal with id ${mealId}`,
+              message: `User with id ${req.userId} unsubscribed from meal with id ${mealId}`,
               data: {},
             });
           }

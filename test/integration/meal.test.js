@@ -13,11 +13,13 @@ const INSERT_TWO_USERS =
   "VALUES ('Matthé', 'van den Berg', 'Lovensdijkstraat 61', 'Breda', 'm.vandenberg@avans.nl', 'Secret12', '06 12345678'), " +
   "('John', 'Doe', 'Lovensdijkstraat 61', 'Breda', 'j.doe@avans.nl', 'Secret12', '06 12345678');";
 const INSERT_MEAL =
-  "INSERT INTO meal (cookId, dateTime, maxAmountOfParticipants, price, imageUrl, name, description) VALUES (1, '2023-5-15 14:30', 2, 2.5, 'www.google.com', 'Meal', 'A delicious meal');";
+  "INSERT INTO meal (cookId, dateTime, maxAmountOfParticipants, price, imageUrl, name, description) VALUES (1, '2023-5-15 14:30', 1, 2.5, 'www.google.com', 'Meal', 'A delicious meal');";
 const INSERT_TWO_MEALS =
   "INSERT INTO meal (cookId, dateTime, maxAmountOfParticipants, price, imageUrl, name, description) " +
   "VALUES (1, '2023-5-15 14:30', 2, 2.5, 'www.google.com', 'Meal', 'A delicious meal'), " +
   "(1, '2024-5-15 14:30', 5, 15.5, 'www.google.com', 'Second meal', 'Another delicious meal');";
+const INSERT_PARTICIPATION =
+  "INSERT INTO meal_participants_user (mealId, userId) VALUES (1, 1);";
 describe("UC-301 Adding a meal", () => {
   let token;
 
@@ -330,7 +332,7 @@ describe("UC-304 Retrieving meal by ID", () => {
           isVega: false,
           isVegan: false,
           isToTakeHome: true,
-          maxAmountOfParticipants: 2,
+          maxAmountOfParticipants: 1,
           imageUrl: "www.google.com",
         });
         res.body.data.should.have.property("dateTime").to.be.a("string").to.not
@@ -344,6 +346,8 @@ describe("UC-304 Retrieving meal by ID", () => {
   });
 });
 describe("UC-305 Deleting a meal", () => {
+  let token;
+
   beforeEach((done) => {
     pool.query(INSERT_TWO_USERS + INSERT_MEAL, (err, result) => {
       chai
@@ -417,6 +421,163 @@ describe("UC-305 Deleting a meal", () => {
         res.body.should.has
           .property("message")
           .to.be.equal("Deleted meal with id 1.");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
+  });
+});
+describe("UC-401 Registering for a meal", () => {
+  let token;
+
+  beforeEach((done) => {
+    pool.query(INSERT_USER + INSERT_MEAL, (err, result) => {
+      chai
+        .request(server)
+        .post("/api/login")
+        .send({
+          emailAddress: "m.vandenberg@avans.nl",
+          password: "Secret12",
+        })
+        .end((err, res) => {
+          token = res.body.data.token;
+          done();
+        });
+    });
+  });
+
+  it("TC-401-1 should require the user to be logged in", (done) => {
+    chai
+      .request(server)
+      .post("/api/meal/1/participate")
+      .end((err, res) => {
+        res.body.should.has.property("status").to.be.equal(401);
+        res.body.should.has.property("message").to.be.equal("Not authorized");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
+  });
+  it("TC-401-2 should not let the user participate when meal does not exist", (done) => {
+    chai
+      .request(server)
+      .post("/api/meal/2/participate")
+      .set("authorization", "Bearer " + token)
+      .end((err, res) => {
+        res.body.should.has.property("status").to.be.equal(404);
+        res.body.should.has
+          .property("message")
+          .to.be.equal("Meal with id 2 not found.");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
+  });
+  it("TC-401-3 should let user participate", (done) => {
+    chai
+      .request(server)
+      .post("/api/meal/1/participate")
+      .set("authorization", "Bearer " + token)
+      .end((err, res) => {
+        res.body.should.has.property("status").to.be.equal(200);
+        res.body.should.has
+          .property("message")
+          .to.be.equal("User with id 1 registered for meal with id 1");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
+  });
+  it("TC-401-4 should not let user participate when max amount of participants is reached", (done) => {
+    chai
+      .request(server)
+      .post("/api/meal/1/participate")
+      .set("authorization", "Bearer " + token)
+      .end((err, res) => {
+        chai
+          .request(server)
+          .post("/api/meal/1/participate")
+          .set("authorization", "Bearer " + token)
+          .end((err, res) => {
+            res.body.should.has.property("status").to.be.equal(200);
+            res.body.should.has
+              .property("message")
+              .to.be.equal("Max amount of participants reached");
+            res.body.should.has.property("data").to.be.empty;
+            done();
+          });
+      });
+  });
+});
+describe("UC-402 Cancelling participation for a meal", () => {
+  let token;
+
+  beforeEach((done) => {
+    pool.query(
+      INSERT_USER + INSERT_TWO_MEALS + INSERT_PARTICIPATION,
+      (err, result) => {
+        chai
+          .request(server)
+          .post("/api/login")
+          .send({
+            emailAddress: "m.vandenberg@avans.nl",
+            password: "Secret12",
+          })
+          .end((err, res) => {
+            token = res.body.data.token;
+            done();
+          });
+      }
+    );
+  });
+
+  it("TC-402-1 should require the user to be logged in", (done) => {
+    chai
+      .request(server)
+      .delete("/api/meal/1/participate")
+      .end((err, res) => {
+        res.body.should.has.property("status").to.be.equal(401);
+        res.body.should.has.property("message").to.be.equal("Not authorized");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
+  });
+  it("TC-402-2 should not let the user participate when meal does not exist", (done) => {
+    chai
+      .request(server)
+      .delete("/api/meal/3/participate")
+      .set("authorization", "Bearer " + token)
+      .end((err, res) => {
+        res.body.should.has.property("status").to.be.equal(404);
+        res.body.should.has
+          .property("message")
+          .to.be.equal("Meal with id 3 not found.");
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
+  });
+  it("TC-402-3 should not let user cancel participation when participation does not exist", (done) => {
+    chai
+      .request(server)
+      .delete("/api/meal/2/participate")
+      .set("authorization", "Bearer " + token)
+      .end((err, res) => {
+        res.body.should.has.property("status").to.be.equal(404);
+        res.body.should.has
+          .property("message")
+          .to.be.equal(
+            "User with id 1 does not have a participation for meal with id 2."
+          );
+        res.body.should.has.property("data").to.be.empty;
+        done();
+      });
+  });
+  it("TC-402-4 should let user cancel participation", (done) => {
+    chai
+      .request(server)
+      .delete("/api/meal/1/participate")
+      .set("authorization", "Bearer " + token)
+      .end((err, res) => {
+        res.body.should.has.property("status").to.be.equal(200);
+        res.body.should.has
+          .property("message")
+          .to.be.equal("User with id 1 unsubscribed from meal with id 1");
         res.body.should.has.property("data").to.be.empty;
         done();
       });
