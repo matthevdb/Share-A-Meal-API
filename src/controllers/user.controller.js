@@ -197,7 +197,7 @@ let controller = {
         res.status(200).json({
           status: 200,
           message: "User profile succesfully returned",
-          data: result,
+          data: result[0],
         });
       }
     );

@@ -311,7 +311,7 @@ describe("UC-203 Requesting the user profile", function () {
         res.body.should.has
           .property("message")
           .to.be.equal("User profile succesfully returned");
-        res.body.should.has.property("data").to.deep.include({
+        res.body.should.has.property("data").to.contain({
           id: 1,
           firstName: "Matthé",
           lastName: "van den Berg",
