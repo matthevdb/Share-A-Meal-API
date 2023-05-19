@@ -47,7 +47,10 @@ router.delete(
 );
 
 // UC-403 Opvragen van deelnemers
-router.get("/api/meal/:mealId/participants");
+router.get(
+  "/api/meal/:mealId/participants",
+  mealController.getParticipantsByMealId
+);
 
 // UC-404 Opvragen van details van deelnemer
 router.get("/api/meal/:mealId/participants/:participantId");

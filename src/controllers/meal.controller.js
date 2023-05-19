@@ -375,6 +375,29 @@ let controller = {
       }
     );
   },
+  getParticipantsByMealId: (req, res, next) => {
+    let mealId = parseInt(req.params.mealId);
+
+    pool.query(
+      "SELECT user.* FROM user JOIN meal_participants_user ON user.id = meal_participants_user.userId WHERE meal_participants_user.mealId = ?",
+      mealId,
+      (err, result) => {
+        if (result.length == 0) {
+          return next({
+            status: 404,
+            message: `No participants found for meal with id ${mealId}`,
+            data: {},
+          });
+        }
+
+        res.status(200).json({
+          status: 200,
+          message: `Participants for meal with id ${mealId}`,
+          result: result.map(({ password, ...userdata }) => userdata),
+        });
+      }
+    );
+  },
 };
 
 module.exports = controller;
