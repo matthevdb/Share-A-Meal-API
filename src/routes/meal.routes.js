@@ -54,6 +54,10 @@ router.get(
 );
 
 // UC-404 Opvragen van details van deelnemer
-router.get("/api/meal/:mealId/participants/:participantId");
+router.get(
+  "/api/meal/:mealId/participants/:participantId",
+  authController.validateToken,
+  mealController.getParticipantDetails
+);
 
 module.exports = router;

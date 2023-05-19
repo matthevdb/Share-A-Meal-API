@@ -346,7 +346,7 @@ let controller = {
       mealId,
       (err, result) => {
         if (result[0].count == 0) {
-          return res.status(200).json({
+          return next({
             status: 404,
             message: `Meal with id ${mealId} not found.`,
             data: {},
@@ -358,8 +358,8 @@ let controller = {
           [mealId, req.userId],
           (err, result) => {
             if (result.affectedRows == 0) {
-              return res.status(404).json({
-                status: 200,
+              return next({
+                status: 404,
                 message: `User with id ${req.userId} does not have a participation for meal with id ${mealId}.`,
                 data: {},
               });
@@ -379,22 +379,90 @@ let controller = {
     let mealId = parseInt(req.params.mealId);
 
     pool.query(
-      "SELECT user.* FROM user JOIN meal_participants_user ON user.id = meal_participants_user.userId WHERE meal_participants_user.mealId = ?",
+      "SELECT cookId FROM meal WHERE id = ?",
+      req.userId,
+      (err, result) => {
+        if (result.length == 0) {
+          return next({
+            status: 404,
+            message: `Meal with id ${mealId} not found.`,
+            data: {},
+          });
+        }
+
+        if (result[0].cookId != req.userId) {
+          return next({
+            status: 403,
+            message: "You do not own this data",
+            data: {},
+          });
+        }
+
+        pool.query(
+          "SELECT user.* FROM user JOIN meal_participants_user ON user.id = meal_participants_user.userId WHERE meal_participants_user.mealId = ?",
+          mealId,
+          (err, result) => {
+            if (result.length == 0) {
+              return next({
+                status: 404,
+                message: `No participants found for meal with id ${mealId}`,
+                data: {},
+              });
+            }
+
+            res.status(200).json({
+              status: 200,
+              message: `Participants for meal with id ${mealId}`,
+              result: result.map(({ password, ...userdata }) => userdata),
+            });
+          }
+        );
+      }
+    );
+  },
+  getParticipantDetails: (req, res, next) => {
+    let mealId = parseInt(req.params.mealId);
+    let participantId = parseInt(req.params.participantId);
+
+    pool.query(
+      "SELECT cookId FROM meal WHERE id = ?",
       mealId,
       (err, result) => {
         if (result.length == 0) {
           return next({
             status: 404,
-            message: `No participants found for meal with id ${mealId}`,
+            message: `Meal with id ${mealId} not found.`,
             data: {},
           });
         }
 
-        res.status(200).json({
-          status: 200,
-          message: `Participants for meal with id ${mealId}`,
-          result: result.map(({ password, ...userdata }) => userdata),
-        });
+        if (result[0].cookId != req.userId) {
+          return next({
+            status: 403,
+            message: "You do not own this data",
+            data: {},
+          });
+        }
+
+        pool.query(
+          "SELECT user.* FROM user JOIN meal_participants_user ON user.id = meal_participants_user.userId WHERE meal_participants_user.mealId = ? AND user.id = ?",
+          [mealId, participantId],
+          (err, result) => {
+            if (result.length == 0) {
+              return next({
+                status: 404,
+                message: `Participant with id ${participantId} not found for meal with id ${mealId}`,
+                data: {},
+              });
+            }
+
+            res.status(200).json({
+              status: 200,
+              message: `Participant with id ${participantId} for meal with id ${mealId}`,
+              result: result.map(({ password, ...userdata }) => userdata)[0],
+            });
+          }
+        );
       }
     );
   },
