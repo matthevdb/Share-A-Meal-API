@@ -380,7 +380,7 @@ let controller = {
 
     pool.query(
       "SELECT cookId FROM meal WHERE id = ?",
-      req.userId,
+      mealId,
       (err, result) => {
         if (result.length == 0) {
           return next({
