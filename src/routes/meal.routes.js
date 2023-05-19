@@ -49,6 +49,7 @@ router.delete(
 // UC-403 Opvragen van deelnemers
 router.get(
   "/api/meal/:mealId/participants",
+  authController.validateToken,
   mealController.getParticipantsByMealId
 );
 
