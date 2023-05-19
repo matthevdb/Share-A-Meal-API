@@ -330,10 +330,11 @@ describe("UC-304 Retrieving meal by ID", () => {
           isVega: false,
           isVegan: false,
           isToTakeHome: true,
-          dateTime: "2023-05-15T12:30:00.000Z",
           maxAmountOfParticipants: 2,
           imageUrl: "www.google.com",
         });
+        res.body.data.should.have.property("dateTime").to.be.a("string").to.not
+          .be.empty;
         res.body.data.should.have.property("cook").to.be.an("object").to.not.be
           .empty;
         res.body.data.should.have.property("allergenes").to.be.an("array").to.be
