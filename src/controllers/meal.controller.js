@@ -128,7 +128,9 @@ let controller = {
                 maxAmountOfParticipants: row.maxAmountOfParticipants,
                 price: row.price,
                 imageUrl: row.imageUrl,
-                allergenes: row.allergenes,
+                allergenes: row.allergenes
+                  ? Array.from(row.allergenes.split(","))
+                  : [],
                 cook: {
                   id: row.cookId,
                   firstName: row.firstName,
@@ -180,7 +182,9 @@ let controller = {
                 maxAmountOfParticipants: row.maxAmountOfParticipants,
                 price: row.price,
                 imageUrl: row.imageUrl,
-                allergenes: row.allergenes,
+                allergenes: row.allergenes
+                  ? Array.from(row.allergenes.split(","))
+                  : [],
                 cook: {
                   id: row.cookId,
                   firstName: row.firstName,
