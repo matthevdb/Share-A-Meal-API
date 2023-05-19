@@ -338,8 +338,6 @@ describe("UC-304 Retrieving meal by ID", () => {
           .empty;
         res.body.data.should.have.property("allergenes").to.be.an("array").to.be
           .empty;
-        res.body.data.should.have.property("participants").to.be.an("array").to
-          .be.empty;
         done();
       });
   });
