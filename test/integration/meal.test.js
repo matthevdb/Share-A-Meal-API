@@ -279,6 +279,7 @@ describe("UC-303 Retrieving all meals", () => {
           .with.lengthOf.at.least(2);
         res.body.data[0].should.have.property("cook").to.be.an("object").to.not
           .be.empty;
+        res.body.data[0].cook.should.not.has.property("password");
         done();
       });
   });
@@ -339,6 +340,7 @@ describe("UC-304 Retrieving meal by ID", () => {
           .be.empty;
         res.body.data.should.have.property("cook").to.be.an("object").to.not.be
           .empty;
+        res.body.data.cook.should.not.has.property("password");
         res.body.data.should.have.property("allergenes").to.be.an("array").to.be
           .empty;
         done();
@@ -420,7 +422,7 @@ describe("UC-305 Deleting a meal", () => {
         res.body.should.has.property("status").to.be.equal(200);
         res.body.should.has
           .property("message")
-          .to.be.equal("Deleted meal with id 1.");
+          .to.be.equal("Maaltijd met ID 1 is verwijderd");
         res.body.should.has.property("data").to.be.empty;
         done();
       });
@@ -479,8 +481,10 @@ describe("UC-401 Registering for a meal", () => {
         res.body.should.has.property("status").to.be.equal(200);
         res.body.should.has
           .property("message")
-          .to.be.equal("User with id 1 registered for meal with id 1");
-        res.body.should.has.property("data").to.be.empty;
+          .to.be.equal("User met ID 1 is aangemeld voor maaltijd met ID 1");
+        res.body.should.has
+          .property("data")
+          .to.be.equal({ mealId: 1, userId: 1 });
         done();
       });
   });
@@ -577,7 +581,7 @@ describe("UC-402 Cancelling participation for a meal", () => {
         res.body.should.has.property("status").to.be.equal(200);
         res.body.should.has
           .property("message")
-          .to.be.equal("User with id 1 unsubscribed from meal with id 1");
+          .to.be.equal("User met ID 43 is afgemeld voor maaltijd met ID 1");
         res.body.should.has.property("data").to.be.empty;
         done();
       });

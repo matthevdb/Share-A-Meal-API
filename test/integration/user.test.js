@@ -659,7 +659,7 @@ describe("UC-206 Deleting a user", function () {
         res.body.should.has.property("status").to.be.equal(200);
         res.body.should.has
           .property("message")
-          .to.be.equal("User with id 1 deleted.");
+          .to.be.equal("Gebruiker met ID 1 is verwijderd");
         res.body.should.has.property("data").to.be.empty;
         done();
       });
