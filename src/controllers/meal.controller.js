@@ -386,7 +386,7 @@ let controller = {
             res.status(200).json({
               status: 200,
               message: `User met ID ${req.userId} is afgemeld voor maaltijd met ID ${mealId}`,
-              data: {},
+              data: { mealId: mealId, userId: req.userId },
             });
           }
         );
