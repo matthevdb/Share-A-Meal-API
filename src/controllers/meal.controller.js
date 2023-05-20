@@ -103,9 +103,9 @@ let controller = {
   },
   getAllMeals: (req, res, next) => {
     pool.query(
-      "SELECT *, meal.id AS mealId, user.id AS cookId from meal JOIN user ON meal.cookId = user.id;",
+      "SELECT *, meal.id AS mealId, user.id AS cookId from meal JOIN user ON meal.cookId = user.id; SELECT * FROM user JOIN meal_participants_user ON user.id = meal_participants_user.userId;",
       (error, result) => {
-        if (result.length == 0) {
+        if (result[0].length == 0) {
           next({
             status: 404,
             message: "No meals found.",
@@ -115,7 +115,7 @@ let controller = {
           res.status(200).json({
             status: 200,
             message: "Meals found.",
-            data: result.map((row) => {
+            data: result[0].map((row) => {
               return {
                 id: row.mealId,
                 name: row.name,
@@ -142,6 +142,9 @@ let controller = {
                   street: row.street,
                   city: row.city,
                 },
+                participants: result[1]
+                  .filter((participant) => participant.mealId == row.mealId)
+                  .map(({ password, mealId, userId, ...userdata }) => userdata),
               };
             }),
           });
@@ -153,10 +156,10 @@ let controller = {
     let id = req.params.id;
 
     pool.query(
-      "SELECT *, meal.id AS mealId, user.id AS cookId from meal JOIN user ON meal.cookId = user.id WHERE meal.id = ?;",
+      "SELECT *, meal.id AS mealId, user.id AS cookId from meal JOIN user ON meal.cookId = user.id WHERE meal.id = ?; SELECT * FROM user JOIN meal_participants_user ON user.id = meal_participants_user.userId;",
       id,
       (error, result) => {
-        if (result.length == 0) {
+        if (result[0].length == 0) {
           const error = {
             status: 404,
             message: `Meal with id ${id} not found.`,
@@ -168,7 +171,7 @@ let controller = {
           res.status(200).json({
             status: 200,
             message: `Meal with id ${id} found.`,
-            data: result.map((row) => {
+            data: result[0].map((row) => {
               return {
                 id: row.mealId,
                 name: row.name,
@@ -195,6 +198,9 @@ let controller = {
                   street: row.street,
                   city: row.city,
                 },
+                participants: result[1]
+                  .filter((participant) => participant.mealId == row.mealId)
+                  .map(({ password, mealId, userId, ...userdata }) => userdata),
               };
             })[0],
           });
