@@ -581,7 +581,7 @@ describe("UC-402 Cancelling participation for a meal", () => {
         res.body.should.has.property("status").to.be.equal(200);
         res.body.should.has
           .property("message")
-          .to.be.equal("User met ID 43 is afgemeld voor maaltijd met ID 1");
+          .to.be.equal("User met ID 1 is afgemeld voor maaltijd met ID 1");
         res.body.should.has.property("data").to.be.empty;
         done();
       });
