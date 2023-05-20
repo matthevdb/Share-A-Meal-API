@@ -163,7 +163,7 @@ let controller = {
         (error, result) => {
           if (result.length == 0) {
             const error = {
-              status: 404,
+              status: 200,
               message: "No users found matching the search parameters.",
               data: {},
             };
