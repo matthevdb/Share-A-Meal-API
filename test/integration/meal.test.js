@@ -484,7 +484,7 @@ describe("UC-401 Registering for a meal", () => {
           .to.be.equal("User met ID 1 is aangemeld voor maaltijd met ID 1");
         res.body.should.has
           .property("data")
-          .to.be.equal({ mealId: 1, userId: 1 });
+          .to.be.eql({ mealId: 1, userId: 1 });
         done();
       });
   });
