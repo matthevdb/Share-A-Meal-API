@@ -314,7 +314,7 @@ let controller = {
           pool.query("DELETE FROM user WHERE id = ?", [id], (error, result) => {
             res.status(200).json({
               status: 200,
-              message: `User with id ${id} deleted.`,
+              message: `Gebruiker met ID ${id} is verwijderd`,
               data: {},
             });
           });

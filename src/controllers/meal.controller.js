@@ -137,7 +137,6 @@ let controller = {
                   lastName: row.lastName,
                   isActive: row.isActive,
                   emailAdress: row.emailAdress,
-                  password: row.password,
                   phoneNumber: row.phoneNumber,
                   roles: row.roles,
                   street: row.street,
@@ -191,7 +190,6 @@ let controller = {
                   lastName: row.lastName,
                   isActive: row.isActive,
                   emailAdress: row.emailAdress,
-                  password: row.password,
                   phoneNumber: row.phoneNumber,
                   roles: row.roles,
                   street: row.street,
@@ -276,7 +274,7 @@ let controller = {
         pool.query("DELETE FROM meal WHERE id = ?", id, (err, result) => {
           res.status(200).json({
             status: 200,
-            message: `Deleted meal with id ${id}.`,
+            message: `Maaltijd met ID ${id} is verwijderd`,
             data: {},
           });
         });
@@ -342,8 +340,8 @@ let controller = {
 
                 res.status(200).json({
                   status: 200,
-                  message: `User with id ${req.userId} registered for meal with id ${mealId}`,
-                  data: {},
+                  message: `User met ID ${req.userId} is aangemeld voor maaltijd met ID ${mealId}`,
+                  data: { mealId: mealId, userId: req.userId },
                 });
               }
             );
@@ -381,7 +379,7 @@ let controller = {
 
             res.status(200).json({
               status: 200,
-              message: `User with id ${req.userId} unsubscribed from meal with id ${mealId}`,
+              message: `User met ID ${req.userId} is afgemeld voor maaltijd met ID ${mealId}`,
               data: {},
             });
           }
