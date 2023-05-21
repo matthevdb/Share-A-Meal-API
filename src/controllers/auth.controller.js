@@ -11,6 +11,16 @@ let controller = {
       assert(typeof emailAddress === "string", "emailAddress must be a string");
       assert(typeof password === "string", "password must be a string");
 
+      if (!password.match(/^(?=.*[A-Z])(?=.*\d).{8,}$/gm)) {
+        const error = {
+          status: 400,
+          message: "You must provide a valid password",
+          data: {},
+        };
+
+        next(error);
+      }
+
       next();
     } catch (error) {
       next({
