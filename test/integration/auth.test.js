@@ -46,7 +46,7 @@ describe("UC-101 Logging in", function () {
         res.body.should.has.property("status").to.be.equal(400);
         res.body.should.has
           .property("message")
-          .to.be.equal("Emailaddress and password do not match");
+          .to.be.equal("You must provide a valid password");
         res.body.should.has.property("data").to.be.empty;
         done();
       });
